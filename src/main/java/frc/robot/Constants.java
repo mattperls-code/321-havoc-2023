@@ -63,22 +63,16 @@ public final class Constants {
         m/s what we need for motion profile
         */
 
-        public static final double kGearRatio = 1;
+        public static final double kGearRatio = 1; //1 mechRot/n encoderRot
         public static final double kWheelRadius = 0;
         public static final double kDistPerRot = kGearRatio * (2* kWheelRadius * Math.PI);
 
         /*
-        Position is encoderRotations
-        encoderRot/ticks * mechRot/encoderRot = 1 / 360 * circumference
-        dist/degree
-        
-        FUCK THIS FOR NOW
-        
-        degree/encoderRotation 
-
+        Position is encoderRotations 
+        encoderRot * (1 mechRot/n encoderRot) * 360 deg/1 mechRot = deg/encoderRot
          */
 
-        public static final double kDegreePerRot = 0;
+        public static final double kDegPerRot = kGearRatio * 360;
       }
 
       public static enum Setpoints{
@@ -138,7 +132,7 @@ public final class Constants {
         public static final double kGearRatio = 1;
         public static final double kWheelRadius = 0; //m
         public static final double kDistPerRot = kGearRatio * (2* kWheelRadius * Math.PI);
-        public static final double kDegreePerRot = 0.0;
+        public static final double kDegPerRot = kGearRatio * 360;
       }
 
       public static enum Setpoints{

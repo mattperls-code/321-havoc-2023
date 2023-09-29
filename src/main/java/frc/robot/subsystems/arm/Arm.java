@@ -68,11 +68,11 @@ public class Arm extends SubsystemBase {
   }
 
   public void configureEncoders() {
-    anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegreePerRot);
+    anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegPerRot);
     anchorEncoder.setVelocityConversionFactor(Constants.Arm.Anchor.Conversions.kDistPerRot);
     anchorEncoder.setZeroOffset(Constants.Arm.Anchor.kZeroPosition);
 
-    floatingEncoder.setPositionConversionFactor(Constants.Arm.Floating.Conversions.kDegreePerRot);
+    floatingEncoder.setPositionConversionFactor(Constants.Arm.Floating.Conversions.kDegPerRot);
     floatingEncoder.setVelocityConversionFactor(Constants.Arm.Floating.Conversions.kDistPerRot);
     floatingEncoder.setZeroOffset(Constants.Arm.Floating.kZeroPosition);
   }
