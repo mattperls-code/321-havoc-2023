@@ -22,17 +22,14 @@ public final class Constants {
       public static final int kAnchorPort = 0;
       public static final int kAnchorEncoderPort = 0;
 
-
-
       public static final boolean kInverted = false;
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
       public static final boolean kEnableSoftLimit = true;
-      public static final double kMaxOutput = 0.5; //going up
-      public static final double kMinOutput = -0.4; //going down
+      public static final double kMaxOutput = 0.5; // going up
+      public static final double kMinOutput = -0.4; // going down
       public static final int kCurrentLimit = 60; // 40 to 60
-
 
       public static final class PID {
         public static final double kP = 0;
@@ -42,8 +39,8 @@ public final class Constants {
       }
 
       public static final class FF {
-        public static final double ks = 0;  
-        public static final double kg = 0; //gravity FF most likely only tune this gain
+        public static final double ks = 0;
+        public static final double kg = 0; // gravity FF most likely only tune this gain
         public static final double kv = 0;
         public static final double ka = 0;
         public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
@@ -53,7 +50,7 @@ public final class Constants {
         public static final double maxVel = 2.0;
         public static final double maxAccel = 1.0;
         public static final TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
-          new TrapezoidProfile.Constraints(maxVel, maxAccel);
+            new TrapezoidProfile.Constraints(maxVel, maxAccel);
       }
 
       public static final class Conversions {
@@ -63,24 +60,25 @@ public final class Constants {
         m/s what we need for motion profile
         */
 
-        public static final double kGearRatio = 1; //1 mechRot/n encoderRot
+        public static final double kGearRatio = 1; // 1 mechRot/n encoderRot
         public static final double kWheelRadius = 0;
-        public static final double kDistPerRot = kGearRatio * (2* kWheelRadius * Math.PI);
+        public static final double kDistPerRot = kGearRatio * (2 * kWheelRadius * Math.PI);
 
         /*
-        Position is encoderRotations 
+        Position is encoderRotations
         encoderRot * (1 mechRot/n encoderRot) * 360 deg/1 mechRot = deg/encoderRot
          */
 
         public static final double kDegPerRot = kGearRatio * 360;
       }
 
-      public static enum Setpoints{
+      public static enum Setpoints {
         TEST_ANCHOR_SETPOINT(1, 0);
 
         public double position;
         public double velocity;
-        Setpoints(double position, double velocity){
+
+        Setpoints(double position, double velocity) {
           this.position = position;
           this.velocity = velocity;
         }
@@ -96,8 +94,8 @@ public final class Constants {
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
       public static final boolean kEnableSoftLimit = true;
-      public static final double kMaxOutput = 0.5; //going up
-      public static final double kMinOutput = -0.5; //going down
+      public static final double kMaxOutput = 0.5; // going up
+      public static final double kMinOutput = -0.5; // going down
       public static final int kCurrentLimit = 60; // 40 to 60
 
       public static final class PID {
@@ -108,18 +106,19 @@ public final class Constants {
       }
 
       public static final class FF {
-        public static final double ks = 0;  
-        public static final double kg = 0; //gravity FF most likely only tune this gain
+        public static final double ks = 0;
+        public static final double kg = 0; // gravity FF most likely only tune this gain
         public static final double kv = 0;
         public static final double ka = 0;
-        public static final ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+        public static final ArmFeedforward FLOATING_FEEDFORWARD =
+            new ArmFeedforward(ks, kg, kv, ka);
       }
 
       public static final class MP {
         public static final double maxVel = 1.0;
         public static final double maxAccel = 1.0;
         public static final TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
-          new TrapezoidProfile.Constraints(maxVel, maxAccel);
+            new TrapezoidProfile.Constraints(maxVel, maxAccel);
       }
 
       public static final class Conversions {
@@ -130,17 +129,18 @@ public final class Constants {
         */
 
         public static final double kGearRatio = 1;
-        public static final double kWheelRadius = 0; //m
-        public static final double kDistPerRot = kGearRatio * (2* kWheelRadius * Math.PI);
+        public static final double kWheelRadius = 0; // m
+        public static final double kDistPerRot = kGearRatio * (2 * kWheelRadius * Math.PI);
         public static final double kDegPerRot = kGearRatio * 360;
       }
 
-      public static enum Setpoints{
+      public static enum Setpoints {
         TEST_FLOATING_SETPOINT(1, 0);
 
         public double position;
         public double velocity;
-        Setpoints(double position, double velocity){
+
+        Setpoints(double position, double velocity) {
           this.position = position;
           this.velocity = velocity;
         }

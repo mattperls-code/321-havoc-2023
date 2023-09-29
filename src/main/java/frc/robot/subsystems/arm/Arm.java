@@ -3,13 +3,12 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -91,25 +90,23 @@ public class Arm extends SubsystemBase {
         Constants.Arm.Floating.kMinOutput, Constants.Arm.Floating.kMaxOutput);
   }
 
-  public double getAnchorAngle(){
+  public double getAnchorAngle() {
     return anchorEncoder.getPosition();
   }
 
-  public double getFloatingAngle(){
+  public double getFloatingAngle() {
     return floatingEncoder.getPosition();
   }
 
-  public double getAnchorVelocity(){
+  public double getAnchorVelocity() {
     return anchorEncoder.getVelocity();
   }
 
-  public double getFloatingVelocity(){
+  public double getFloatingVelocity() {
     return floatingEncoder.getVelocity();
   }
 
-  public void setAnchorAngle(){
-    
-  }
+  public void setAnchorAngle() {}
 
   public static class PeriodicIO {
     public double anchorAngle = Constants.Arm.Anchor.kZeroPosition;
@@ -122,9 +119,23 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    periodicIO.anchorFF = Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(periodicIO.anchorAngle, periodicIO.anchorVelocity);
-    periodicIO.floatingFF = Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(periodicIO.floatingAngle, periodicIO.floatingVelocity);
-    anchorPIDController.setReference(periodicIO.anchorAngle, ControlType.kPosition,  Constants.Arm.Anchor.PID.kSlot, periodicIO.anchorFF, SparkMaxPIDController.ArbFFUnits.kVoltage);
-    floatingPIDController.setReference(periodicIO.floatingAngle, ControlType.kPosition,  Constants.Arm.Floating.PID.kSlot, periodicIO.floatingFF, SparkMaxPIDController.ArbFFUnits.kVoltage);
+    periodicIO.anchorFF =
+        Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(
+            periodicIO.anchorAngle, periodicIO.anchorVelocity);
+    periodicIO.floatingFF =
+        Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
+            periodicIO.floatingAngle, periodicIO.floatingVelocity);
+    anchorPIDController.setReference(
+        periodicIO.anchorAngle,
+        ControlType.kPosition,
+        Constants.Arm.Anchor.PID.kSlot,
+        periodicIO.anchorFF,
+        SparkMaxPIDController.ArbFFUnits.kVoltage);
+    floatingPIDController.setReference(
+        periodicIO.floatingAngle,
+        ControlType.kPosition,
+        Constants.Arm.Floating.PID.kSlot,
+        periodicIO.floatingFF,
+        SparkMaxPIDController.ArbFFUnits.kVoltage);
   }
 }
