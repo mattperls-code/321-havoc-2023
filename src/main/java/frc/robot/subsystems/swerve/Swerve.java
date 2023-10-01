@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -52,44 +53,68 @@ public class Swerve extends SubsystemBase {
         this.field.setRobotPose(poseEstimator.update(gyro.getRotation2d(), getModulePositions()));
         SmartDashboard.putData("Field", this.field);
 
-        updateModules();
+        SmartDashboard.putNumber("frontLeftAngleDeg", this.modules.get(0).getPosition().angle.getDegrees());
+        SmartDashboard.putNumber("frontRightAngleDeg", this.modules.get(1).getPosition().angle.getDegrees());
+        SmartDashboard.putNumber("backLeftAngleDeg", this.modules.get(2).getPosition().angle.getDegrees());
+        SmartDashboard.putNumber("backRightAngleDeg", this.modules.get(3).getPosition().angle.getDegrees());
+
+        updateModulePIDFs();
     }
 
-    public CommandBase drive(DoubleSupplier xTrans, DoubleSupplier yTrans, DoubleSupplier turn,
+    public CommandBase drive(DoubleSupplier throttle, DoubleSupplier strafe, DoubleSupplier turn,
                              boolean fieldCentric, double periodSeconds) {
         return run(() -> drive(
-            xTrans.getAsDouble(),
-            yTrans.getAsDouble(),
+            throttle.getAsDouble(),
+            strafe.getAsDouble(),
             turn.getAsDouble(),
             fieldCentric,
             periodSeconds
         ));
     }
 
-    private void drive(double throttle, double strafe, double turn,
-                       boolean fieldCentric, double periodSeconds) {
-         final var states = kSwerveKinematics.toSwerveModuleStates(
-            inputsToChassisSpeeds(
-                throttle,
-                strafe,
-                turn,
-                fieldCentric,
-                periodSeconds)
-        );
-
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);
-
+    public void setModuleStates(SwerveModuleState[] states) {
         for (int i = 0; i < modules.size(); i++) modules.get(i).setDesiredState(states[i]);
     }
 
-    private ChassisSpeeds inputsToChassisSpeeds(double throttle, double strafe, double turn,
+    // this is just for tuning, remove after
+    public void setModuleState(int index, SwerveModuleState state) {
+        modules.get(index).setDesiredState(state);
+    }
+
+    public Pose2d getPose() {
+        return this.poseEstimator.getEstimatedPosition();
+    }
+
+    public void resetPose(Pose2d pose) {
+        this.poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), pose);
+    }
+
+    private void drive(double throttle, double strafe, double turn,
+                       boolean fieldCentric, double periodSeconds) {
+        setModuleStates(
+            statesFromChassisSpeeds(
+                chassisSpeedsFromInputs(
+                    throttle,
+                    strafe,
+                    turn,
+                    fieldCentric,
+                    periodSeconds)));
+    }
+
+    private ChassisSpeeds chassisSpeedsFromInputs(double throttle, double strafe, double turn,
                                                 boolean fieldRelative, double periodSeconds) {
         return ChassisSpeedsUtil.discretize(
-        fieldRelative
+            fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
-    throttle, strafe, turn, gyro.getRotation2d())
+                throttle, strafe, turn, gyro.getRotation2d())
             : new ChassisSpeeds(throttle, strafe, gyro.getRate()),
             periodSeconds);
+    }
+
+    private SwerveModuleState[] statesFromChassisSpeeds(ChassisSpeeds speeds) {
+        final var states = kSwerveKinematics.toSwerveModuleStates(speeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);
+        return states;
     }
 
     private SwerveModulePosition[] getModulePositions() {
@@ -99,19 +124,20 @@ public class Swerve extends SubsystemBase {
             .toArray(SwerveModulePosition[]::new);
     }
 
-    private void updateModules() {
-        final double driveP = SmartDashboardUtil.pollOrDefault("kDriveP", kDriveP);
-        final double driveI = SmartDashboardUtil.pollOrDefault("kDriveP", kDriveI);
-        final double driveD = SmartDashboardUtil.pollOrDefault("kDriveD", kDriveD);
+    private void updateModulePIDFs() {
+        // final double driveP = SmartDashboardUtil.pollOrDefault("kDriveP", Drive.kP);
+        // final double driveI = SmartDashboardUtil.pollOrDefault("kDriveI", Drive.kI);
+        // final double driveD = SmartDashboardUtil.pollOrDefault("kDriveD", Drive.kD);
+        // final double driveFF = SmartDashboardUtil.pollOrDefault("kDriveFF", Drive.kFF);
 
-        final double turnP = SmartDashboardUtil.pollOrDefault("kTurnP", kTurnP);
-        final double turnI = SmartDashboardUtil.pollOrDefault("kTurnI", kTurnI);
-        final double turnD = SmartDashboardUtil.pollOrDefault("kTurnD", kTurnD);
+        final double turnP = SmartDashboardUtil.pollOrDefault("kTurnP", Turn.kP);
+        final double turnI = SmartDashboardUtil.pollOrDefault("kTurnI", Turn.kI);
+        final double turnD = SmartDashboardUtil.pollOrDefault("kTurnD", Turn.kD);
+        final double turnFF = SmartDashboardUtil.pollOrDefault("kTurnFF", Turn.kFF);
 
         this.modules.forEach(module -> {
-            module.setDrivePIDCoeffs(driveP, driveI, driveD);
-            module.setTurnPIDCoeffs(turnP, turnI, turnD);
-            module.update();
+            // module.setDrivePIDFCoeffs(driveP, driveI, driveD, driveFF);
+            module.setTurnPIDFCoeffs(turnP, turnI, turnD, turnFF);
         });
     }
 }

@@ -1,20 +1,17 @@
 package frc.robot.subsystems.swerve;
 
-import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import static frc.robot.Constants.Swerve.*;
 
 public class SwerveModule {
-
     private final CANSparkMax driveMotor;
     private final CANSparkMax turnMotor;
 
@@ -22,9 +19,7 @@ public class SwerveModule {
     private final CANCoder turnEncoder;
 
     private final SparkMaxPIDController driveController;
-    private final PIDController turnController;
-
-    private SwerveModuleState desiredState;
+    private final SparkMaxPIDController turnController;
 
     public SwerveModule(int driveMotorId, int turnMotorId, int turnEncoderId) {
         this.driveMotor = new CANSparkMax(driveMotorId, MotorType.kBrushless);
@@ -34,44 +29,43 @@ public class SwerveModule {
         this.turnEncoder = new CANCoder(turnEncoderId);
 
         this.driveController = driveMotor.getPIDController();
-        this.turnController = new PIDController(
-            kTurnP,
-            kTurnI,
-            kTurnD
-        );
+        this.turnController = turnMotor.getPIDController();
 
         configMotors();
         configEncoders();
         configControllers();
     }
-
-    public void update() {
-        double turnPIDOutput = turnController.calculate(turnEncoder.getPosition(), desiredState.angle.getRadians());
-
-        turnMotor.setVoltage(turnPIDOutput);
-    }
-
     public void setDesiredState(SwerveModuleState state) {
-        var optimizedState = SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getPosition()));
+        var optimizedState = SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
 
         driveController.setReference(optimizedState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
-
-        this.desiredState = optimizedState;
+        turnController.setReference(optimizedState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
     }
 
-    public void setDrivePIDCoeffs(double p, double i, double d) {
+    public void setDrivePIDFCoeffs(double p, double i, double d, double f) {
         this.driveController.setP(p);
         this.driveController.setI(i);
         this.driveController.setD(d);
+        this.driveController.setFF(f);
     }
-    public void setTurnPIDCoeffs(double p, double i, double d) {
-        this.turnController.setPID(p, i, d);
+    public void setTurnPIDFCoeffs(double p, double i, double d, double f) {
+        this.turnController.setP(p);
+        this.turnController.setI(i);
+        this.turnController.setD(d);
+        this.turnController.setFF(f);
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
             driveEncoder.getPosition(),
-            new Rotation2d(turnEncoder.getPosition())
+            Rotation2d.fromRadians(turnEncoder.getAbsolutePosition())
+        );
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(
+            driveEncoder.getVelocity(),
+            Rotation2d.fromRadians(turnEncoder.getAbsolutePosition())
         );
     }
 
@@ -87,23 +81,23 @@ public class SwerveModule {
 
         driveMotor.enableVoltageCompensation(12);
         turnMotor.enableVoltageCompensation(12);
+
+        driveMotor.burnFlash();
+        turnMotor.burnFlash();
     }
 
     private void configEncoders() {
-        driveEncoder.setInverted(false);
+        turnEncoder.configAllSettings(kCANCoderConfig);
 
-        var config = new CANCoderConfiguration();
-        config.sensorCoefficient = 2 * Math.PI / 4096.0;
-        config.unitString = "rad";
-        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
-
-        turnEncoder.configAllSettings(config);
-
-        driveEncoder.setVelocityConversionFactor(kVelocityConversionFactor);
+        driveEncoder.setVelocityConversionFactor(kRPMToMetersPerSecond);
     }
 
     private void configControllers() {
-        setDrivePIDCoeffs(kDriveP, kDriveI, kDriveD);
-        turnController.enableContinuousInput(-Math.PI, Math.PI);
+        setDrivePIDFCoeffs(Drive.kP, Drive.kI, Drive.kD, Drive.kFF);
+        setTurnPIDFCoeffs(Turn.kP, Turn.kI, Turn.kD, Turn.kFF);
+
+        turnController.setPositionPIDWrappingEnabled(true);
+        turnController.setPositionPIDWrappingMaxInput(Math.PI);
+        turnController.setPositionPIDWrappingMinInput(-Math.PI);
     }
 }
