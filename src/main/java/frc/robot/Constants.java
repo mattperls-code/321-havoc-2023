@@ -29,7 +29,7 @@ public final class Constants {
       public static final boolean kEnableSoftLimit = true;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.4; // going down
-      public static final int kCurrentLimit = 60; // 40 to 60
+      public static final int kCurrentLimit = 50; // 40 to 60
 
       public static final class PID {
         public static final double kP = 0;
@@ -96,7 +96,7 @@ public final class Constants {
       public static final boolean kEnableSoftLimit = true;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.5; // going down
-      public static final int kCurrentLimit = 60; // 40 to 60
+      public static final int kCurrentLimit = 50; // 40 to 60
 
       public static final class PID {
         public static final double kP = 0;
@@ -134,6 +134,7 @@ public final class Constants {
         public static final double kDegPerRot = kGearRatio * 360;
       }
 
+      //TODO fix this from arm setpoint vel & pos to goal setpoint for inverse kinematics
       public static enum Setpoints {
         TEST_FLOATING_SETPOINT(1, 0);
 
