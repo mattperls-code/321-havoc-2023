@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,8 +17,8 @@ public class Arm extends SubsystemBase {
   public CANSparkMax anchorMotor;
   public CANSparkMax floatingMotor;
 
-  public AbsoluteEncoder anchorEncoder;
-  public AbsoluteEncoder floatingEncoder;
+  public DutyCycleEncoder anchorEncoder;
+  public DutyCycleEncoder floatingEncoder;
 
   public SparkMaxPIDController anchorPIDController;
   public SparkMaxPIDController floatingPIDController;
@@ -26,19 +27,19 @@ public class Arm extends SubsystemBase {
 
   public Arm() {
     this.anchorMotor = new CANSparkMax(Constants.Arm.Anchor.kAnchorPort, MotorType.kBrushless);
-    this.anchorEncoder = anchorMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.anchorEncoder = new DutyCycleEncoder(Constants.Arm.Anchor.kAnchorEncoderPort);
     this.anchorPIDController = this.anchorMotor.getPIDController();
 
     this.floatingMotor =
         new CANSparkMax(Constants.Arm.Floating.kFloatingPort, MotorType.kBrushless);
-    this.floatingEncoder = floatingMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.floatingEncoder = new DutyCycleEncoder(Constants.Arm.Floating.kFloatingEncoderPort);
     this.floatingPIDController = this.floatingMotor.getPIDController();
 
     configureMotors();
     configureEncoders();
     configureControllers();
 
-    periodicIO = new PeriodicIO();
+    this.periodicIO = new PeriodicIO();
   }
 
   public void configureMotors() {
@@ -67,13 +68,15 @@ public class Arm extends SubsystemBase {
   }
 
   public void configureEncoders() {
-    anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegPerRot);
-    anchorEncoder.setVelocityConversionFactor(Constants.Arm.Anchor.Conversions.kDistPerRot);
-    anchorEncoder.setZeroOffset(Constants.Arm.Anchor.kZeroPosition);
+    anchorEncoder.setDistancePerRotation(Constants.Arm.Anchor.Conversions.kDegPerRot);
+    anchorEncoder.setPositionOffset(Constants.Arm.Anchor.kZeroPosition);
+    anchorEncoder.reset();
 
-    floatingEncoder.setPositionConversionFactor(Constants.Arm.Floating.Conversions.kDegPerRot);
-    floatingEncoder.setVelocityConversionFactor(Constants.Arm.Floating.Conversions.kDistPerRot);
-    floatingEncoder.setZeroOffset(Constants.Arm.Floating.kZeroPosition);
+    floatingEncoder.setDistancePerRotation(Constants.Arm.Floating.Conversions.kDegPerRot);
+    floatingEncoder.setPositionOffset(Constants.Arm.Floating.kZeroPosition);
+    floatingEncoder.reset();
+
+    //determine velocity by delta(x)/delta(t)
   }
 
   public void configureControllers() {
