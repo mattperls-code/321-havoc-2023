@@ -23,6 +23,7 @@ public final class Constants {
       public static final int kAnchorEncoderPort = 0;
 
       public static final boolean kInverted = false;
+      public static final double kAnchorLength = 0;
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
@@ -72,7 +73,7 @@ public final class Constants {
         public static final double kDegPerRot = kGearRatio * 360;
       }
 
-      public static enum Setpoints {
+      public enum Setpoints {
         TEST_ANCHOR_SETPOINT(1, 0);
 
         public double position;
@@ -90,6 +91,8 @@ public final class Constants {
       public static final int kFloatingEncoderPort = 0;
 
       public static final boolean kInverted = false;
+
+      public static final double kFloatingLength = 0;
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
