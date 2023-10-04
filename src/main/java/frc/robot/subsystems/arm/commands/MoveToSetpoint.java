@@ -28,10 +28,25 @@ public class MoveToSetpoint extends CommandBase {
 
   @Override
   public void initialize() {
-    arm.periodicIO.anchorAngle = anchorPosSetpoint;
-    arm.periodicIO.anchorVelocity = anchorVelSetpoint;
-    arm.periodicIO.floatingAngle = floatingPosSetpoint;
-    arm.periodicIO.floatingVelocity = floatingVelSetpoint;
+    // update setpoint Pos & Vel
+    arm.periodicIO.anchorPosSetpoint = anchorPosSetpoint;
+    arm.periodicIO.anchorVelSetpoint = anchorVelSetpoint;
+    arm.periodicIO.floatingPosSetpoint = floatingPosSetpoint;
+    arm.periodicIO.floatingVelSetpoint = floatingVelSetpoint;
+
+    // //MOTION PROFILE
+    // //create new MP with setpoints & get startTime
+    // arm.periodicIO.anchorProfile = new
+    // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS,
+    // new TrapezoidProfile.State(anchorPosSetpoint, anchorVelSetpoint), new
+    // TrapezoidProfile.State(arm.getAnchorAngle(), arm.getAnchorVelocity()));
+    // arm.periodicIO.floatingProfile = new
+    // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS,
+    // new TrapezoidProfile.State(floatingPosSetpoint, floatingVelSetpoint), new
+    // TrapezoidProfile.State(arm.getFloatingAngle(), arm.getFloatingVelocity()));
+    // arm.periodicIO.anchorProfileStartTime = Timer.getFPGATimestamp();
+    // arm.periodicIO.floatingProfileStartTime = Timer.getFPGATimestamp();
+
   }
 
   @Override
@@ -41,7 +56,4 @@ public class MoveToSetpoint extends CommandBase {
         && arm.getFloatingVelocity() == floatingVelSetpoint
         && arm.getFloatingAngle() == floatingPosSetpoint;
   }
-
-  @Override
-  public void end(boolean interrupted) {}
 }

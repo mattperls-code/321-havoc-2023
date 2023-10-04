@@ -61,16 +61,15 @@ public final class Constants {
         */
 
         public static final double kGearRatio = 1; // 1 mechRot/n encoderRot
-        public static final double kWheelRadius = 0;
-        public static final double kDistPerRot = kGearRatio * (2 * kWheelRadius * Math.PI);
-  
+        public static final double kGearRadius = 0;
+        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
 
         /*
-        deg/dist = 360/circumference
-        dist/encoderRot * deg/dist = deg/encoderRot
+        Position is encoderRotations
+        encoderRot * (1 mechRot/n encoderRot) * 360 deg/1 mechRot = deg/encoderRot
          */
 
-        public static final double kDegPerRot = kDistPerRot * (360/(2 * kWheelRadius * Math.PI));
+        public static final double kDegPerRot = kGearRatio * 360;
       }
 
       public static enum Setpoints {
@@ -130,12 +129,12 @@ public final class Constants {
         */
 
         public static final double kGearRatio = 1;
-        public static final double kWheelRadius = 0; // m
-        public static final double kDistPerRot = kGearRatio * (2 * kWheelRadius * Math.PI);
-        public static final double kDegPerRot = kDistPerRot * (360/(2 * kWheelRadius * Math.PI));
+        public static final double kGearRadius = 0; // m
+        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
+        public static final double kDegPerRot = kGearRatio * 360;
       }
 
-      //TODO fix this from arm setpoint vel & pos to goal setpoint for inverse kinematics
+      // TODO fix this from arm setpoint vel & pos to goal setpoint for inverse kinematics
       public static enum Setpoints {
         TEST_FLOATING_SETPOINT(1, 0);
 
