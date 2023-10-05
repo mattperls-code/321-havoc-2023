@@ -7,10 +7,10 @@ import frc.robot.subsystems.arm.Arm;
 
 public class MoveToSetpoint extends CommandBase {
 
-  private double anchorPosSetpoint;
-  private double anchorVelSetpoint;
-  private double floatingPosSetpoint;
-  private double floatingVelSetpoint;
+  private final double anchorPosSetpoint;
+  private final double anchorVelSetpoint;
+  private final double floatingPosSetpoint;
+  private final double floatingVelSetpoint;
   Arm arm;
 
   public MoveToSetpoint(
