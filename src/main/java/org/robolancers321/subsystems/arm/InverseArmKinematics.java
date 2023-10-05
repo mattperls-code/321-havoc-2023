@@ -37,26 +37,21 @@ public class InverseArmKinematics {
 
   private static final double floatLength = Constants.Arm.Floating.kFloatingLength;
 
-  // Length between base and floating
-
-  private final RelativePlane plane;
   private final double dZ;
   private final double dY;
+
+  // Length between base and floating
+
   private final double reach;
 
   public InverseArmKinematics(RelativePlane plane, double dZ, double dY) {
-    this.plane = plane;
-    this.dY = dY + this.plane.getYOffset();
+    this.dY = dY + plane.getYOffset();
     this.dZ = dZ;
     this.reach = getReach(this.dY, this.dZ);
   }
 
   private double calculateBeta() {
-    double top =
-        (Math.pow(this.dZ, 2)
-            + Math.pow(this.dY, 2)
-            - Math.pow(anchorLength, 2)
-            - Math.pow(floatLength, 2));
+    double top = (Math.pow(this.reach, 2) - Math.pow(anchorLength, 2) - Math.pow(floatLength, 2));
 
     double bottom = (2 * anchorLength * floatLength);
 
@@ -64,11 +59,8 @@ public class InverseArmKinematics {
   }
 
   private static double calculateBeta(double rawZ, double rawY) {
-    double top =
-        (Math.pow(rawZ, 2)
-            + Math.pow(rawY, 2)
-            - Math.pow(anchorLength, 2)
-            - Math.pow(floatLength, 2));
+    double reach = getReach(rawY, rawZ);
+    double top = (Math.pow(reach, 2) - Math.pow(anchorLength, 2) - Math.pow(floatLength, 2));
 
     double bottom = (2 * anchorLength * floatLength);
 
@@ -86,6 +78,11 @@ public class InverseArmKinematics {
   }
 
   public Angles getAngles() {
+
+    if (this.reach > floatLength + anchorLength) {
+      return new Angles(Math.atan2(this.dY, this.dZ), 0);
+    }
+
     double beta = this.calculateBeta();
     double alpha = this.calculateAlpha(beta);
 
@@ -93,6 +90,13 @@ public class InverseArmKinematics {
   }
 
   public static Angles getAnglesRaw(double rawZ, double rawY) {
+
+    double reach = getReach(rawY, rawZ);
+
+    if (reach > floatLength + anchorLength) {
+      return new Angles(Math.atan2(rawY, rawZ), 0);
+    }
+
     double beta = calculateBeta(rawZ, rawY);
     double alpha = calculateAlpha(beta, rawY, rawZ);
 
