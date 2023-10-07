@@ -1,8 +1,14 @@
 /* (C) Robolancers 2024 */
 package frc.robot;
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -13,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kPeriodSeconds = Robot.kDefaultPeriod;
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -89,4 +96,78 @@ public final class Constants {
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
     }
   }
+    public static class Swerve {
+        public static final class ModuleConfig {
+            public final int kDriveId;
+            public final int kTurnId;
+            public final int kTurnEncoderId;
+            public final double magOffsetDeg;
+
+            public ModuleConfig(final int driveId, final int turnId, final int turnEncoderId, final double magOffsetDeg) {
+                this.kDriveId = driveId;
+                this.kTurnId = turnId;
+                this.kTurnEncoderId = turnEncoderId;
+                this.magOffsetDeg = magOffsetDeg;
+            }
+        }
+
+        public static final int kFrontLeftDriveId = 2;
+        public static final int kFrontRightDriveId = 4;
+        public static final int kBackLeftDriveId = 7;
+        public static final int kBackRightDriveId = 6;
+        public static final int kFrontLeftTurnId = 9;
+        public static final int kFrontRightTurnId = 3;
+        public static final int kBackLeftTurnId = 8;
+        public static final int kBackRightTurnId = 5;
+        public static final int kFrontLeftTurnEncoderId = 10;
+        public static final int kFrontRightTurnEncoderId = 11;
+        public static final int kBackLeftTurnEncoderId = 13;
+        public static final int kBackRightTurnEncoderId = 12;
+
+        public static final ModuleConfig frontLeft = new ModuleConfig(2, 9, 10, -38.67179683527642);
+        public static final ModuleConfig frontRight = new ModuleConfig(4, 3, 11, -69.08189161938014);
+        public static final ModuleConfig backLeft = new ModuleConfig(7, 8, 13, -8.261702051172689);
+        public static final ModuleConfig backRight = new ModuleConfig(6, 5, 12, -170.59535831198076);
+
+        public static final CANCoderConfiguration kCANCoderConfig = new CANCoderConfiguration();
+
+        static {
+            kCANCoderConfig.sensorCoefficient = 2 * Math.PI / 4096.0;
+            kCANCoderConfig.unitString = "rad";
+            kCANCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+            kCANCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        }
+
+        public static final double kTrackWidthMeters = Units.inchesToMeters(17.5);
+        public static final double kWheelBaseMeters = Units.inchesToMeters(17.5);
+
+        public static final double kWheelRadiusMeters = Units.inchesToMeters(1.5);
+        public static final double kGearRatio = 6.8;
+
+        public static final double kMaxSpeedMetersPerSecond = 0.75;
+
+        public static final double kRPMToMetersPerSecond = 2 * Math.PI * kWheelRadiusMeters / (kGearRatio * 60.0);
+
+        public static final SwerveDriveKinematics kSwerveKinematics = new SwerveDriveKinematics(
+                new Translation2d(kTrackWidthMeters / 2, kWheelBaseMeters / 2), // front left
+                new Translation2d(kTrackWidthMeters / 2, -kWheelBaseMeters / 2), // front right
+                new Translation2d(-kTrackWidthMeters / 2, kWheelBaseMeters / 2), // back left
+                new Translation2d(-kTrackWidthMeters / 2, -kWheelBaseMeters / 2) // back right
+        );
+
+        // TODO: tune coeffs.
+        public static final class Drive {
+            public static final double kP = 0.0;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kFF = 0.30;
+        }
+
+        public static final class Turn {
+            public static final double kP = 0.0;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kFF = 0.0;
+        }
+    }
 }
