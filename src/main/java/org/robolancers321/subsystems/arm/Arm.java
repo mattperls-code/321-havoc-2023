@@ -3,26 +3,32 @@ package org.robolancers321.subsystems.arm;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
 
 public class Arm extends SubsystemBase {
-  public CANSparkMax anchorMotor;
-  public CANSparkMax floatingMotor;
+  private CANSparkMax anchorMotor;
+  private CANSparkMax floatingMotor;
 
-  public AbsoluteEncoder anchorEncoder;
-  public AbsoluteEncoder floatingEncoder;
+  private AbsoluteEncoder anchorEncoder;
+  private AbsoluteEncoder floatingEncoder;
 
-  public SparkMaxPIDController anchorPIDController;
-  public SparkMaxPIDController floatingPIDController;
+  private SparkMaxPIDController anchorPIDController;
+  private SparkMaxPIDController floatingPIDController;
 
-  public PeriodicIO periodicIO;
+  // TODO: potentially should use explicit getters and setters
+  public double anchorSetpoint = Constants.Arm.Anchor.kZeroPosition;
+  public double floatingSetpoint = Constants.Arm.Floating.kZeroPosition;
+
+  // public PeriodicIO periodicIO;
 
   public Arm() {
     this.anchorMotor = new CANSparkMax(Constants.Arm.Anchor.kAnchorPort, MotorType.kBrushless);
@@ -38,11 +44,11 @@ public class Arm extends SubsystemBase {
     configureEncoders();
     configureControllers();
 
-    this.periodicIO = new PeriodicIO();
+    // this.periodicIO = new PeriodicIO();
     // initTuneControllers();
   }
 
-  public void configureMotors() {
+  private void configureMotors() {
     anchorMotor.setInverted(Constants.Arm.Anchor.kInverted);
     anchorMotor.setIdleMode(IdleMode.kBrake);
     anchorMotor.setSmartCurrentLimit(Constants.Arm.Anchor.kCurrentLimit);
@@ -66,7 +72,7 @@ public class Arm extends SubsystemBase {
         SoftLimitDirection.kForward, Constants.Arm.Floating.kEnableSoftLimit);
   }
 
-  public void configureEncoders() {
+  private void configureEncoders() {
     anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegPerRot);
     anchorEncoder.setZeroOffset(Constants.Arm.Anchor.kZeroPosition);
 
@@ -78,7 +84,7 @@ public class Arm extends SubsystemBase {
     // floatingEncoder.setVelocityConversionFactor(Constants.Arm.Floating.Conversions.kDistPerRot);
   }
 
-  public void configureControllers() {
+  private void configureControllers() {
     anchorPIDController.setP(Constants.Arm.Anchor.PID.kP);
     anchorPIDController.setI(Constants.Arm.Anchor.PID.kI);
     anchorPIDController.setD(Constants.Arm.Anchor.PID.kD);
@@ -116,7 +122,15 @@ public class Arm extends SubsystemBase {
     floatingMotor.set(speed);
   }
 
-  public void initTuneControllers() {
+  public void setAnchorControllerReference(double reference, double ff) {
+    anchorPIDController.setReference(reference, ControlType.kPosition, Constants.Arm.Anchor.PID.kSlot, ff, ArbFFUnits.kVoltage);
+  }
+
+  public void setFloatingControllerReference(double reference, double ff) {
+    floatingPIDController.setReference(reference, ControlType.kPosition, Constants.Arm.Floating.PID.kSlot, ff, ArbFFUnits.kVoltage);
+  }
+
+  private void initTuneControllers() {
     SmartDashboard.putNumber(
         "anchorKP", SmartDashboard.getNumber("anchorKP", Constants.Arm.Anchor.PID.kP));
     SmartDashboard.putNumber(
@@ -138,7 +152,7 @@ public class Arm extends SubsystemBase {
         "floatingKS", SmartDashboard.getNumber("flotingKS", Constants.Arm.Anchor.FF.kS));
   }
 
-  public void tuneControllers() {
+  private void tuneControllers() {
     double setpoint = SmartDashboard.getEntry("setpointPos").getDouble(0);
     double anchorKP = SmartDashboard.getEntry("anchorKP").getDouble(0);
     double anchorKI = SmartDashboard.getEntry("anchorKI").getDouble(0);
@@ -152,7 +166,10 @@ public class Arm extends SubsystemBase {
     this.anchorPIDController.setP(anchorKP);
     this.anchorPIDController.setI(anchorKI);
     this.anchorPIDController.setD(anchorKD);
-    periodicIO.anchorPosSetpoint = setpoint;
+
+    // periodicIO.anchorPosSetpoint = setpoint;
+    this.anchorSetpoint = setpoint;
+
     Constants.Arm.Anchor.FF.kG = anchorKG;
     Constants.Arm.Anchor.FF.kS = anchorKS;
 
@@ -172,21 +189,21 @@ public class Arm extends SubsystemBase {
     // Constants.Arm.Floating.FF.kS = floatingKS;
   }
 
-  public static class PeriodicIO {
-    public double anchorPosSetpoint = Constants.Arm.Anchor.kZeroPosition;
-    public double floatingPosSetpoint = Constants.Arm.Floating.kZeroPosition;
-    public double anchorFF = 0.0;
-    public double floatingFF = 0.0;
+  // public static class PeriodicIO {
+  //   public double anchorPosSetpoint = Constants.Arm.Anchor.kZeroPosition;
+  //   public double floatingPosSetpoint = Constants.Arm.Floating.kZeroPosition;
+  //   public double anchorFF = 0.0;
+  //   public double floatingFF = 0.0;
 
-    // MOTION PROFILE
-    // public TrapezoidProfile anchorProfile = new
-    // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
-    // public TrapezoidProfile floatingProfile = new
-    // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new
-    // TrapezoidProfile.State());
-    // public double anchorProfileStartTime = 0.0;
-    // public double floatingProfileStartTime = 0.0;
-  }
+  //   // MOTION PROFILE
+  //   // public TrapezoidProfile anchorProfile = new
+  //   // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
+  //   // public TrapezoidProfile floatingProfile = new
+  //   // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new
+  //   // TrapezoidProfile.State());
+  //   // public double anchorProfileStartTime = 0.0;
+  //   // public double floatingProfileStartTime = 0.0;
+  // }
 
   @Override
   public void periodic() {

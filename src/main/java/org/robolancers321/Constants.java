@@ -34,6 +34,8 @@ public final class Constants {
       public static final double kMinOutput = -0.4; // going down
       public static final int kCurrentLimit = 50; // 40 to 60
 
+      public static final double kTolerance = 2.0; // error within 2 degrees
+
       public static final class PID {
         public static final double kP = 0;
         public static final double kI = 0;
@@ -90,6 +92,8 @@ public final class Constants {
       public static final double kMinOutput = -0.5; // going down
       public static final int kCurrentLimit = 50; // 40 to 60
 
+      public static final double kTolerance = 2.0; // error within 2 degrees
+
       public static final class PID {
         public static final double kP = 0;
         public static final double kI = 0;
@@ -123,31 +127,16 @@ public final class Constants {
     }
 
     public enum ArmSetpoints {
-      // TODO make this flow better. kinda confusing
-      TEST_SETPOINT(0, 0);
+      TEST(0, 0);
 
-      private double anchor;
-      private double floating;
+      public final double anchor;
+      public final double floating;
 
-      ArmSetpoints(double dZ, double dY) {
-        this.convert(null, 0, dZ, dY);
-      }
+      ArmSetpoints(double y, double z){
+        InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
 
-      public void convert(String name, double offset, double dZ, double dY) {
-        // convert goal setpoint to angles
-        InverseArmKinematics setpoint =
-            new InverseArmKinematics(new RelativePlane(name, offset), dZ, dY);
-        InverseArmKinematics.Angles angles = setpoint.getAngles();
-        this.anchor = angles.getAnchorAngle();
-        this.floating = angles.getFloatingAngle();
-      }
-
-      public double getAnchor() {
-        return this.anchor;
-      }
-
-      public double getFloating() {
-        return this.floating;
+        this.anchor = angles.anchor;
+        this.floating = angles.floating;
       }
     }
   }

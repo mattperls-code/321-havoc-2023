@@ -2,27 +2,29 @@
 package org.robolancers321.subsystems.arm.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import org.robolancers321.Constants;
 import org.robolancers321.Constants.Arm.ArmSetpoints;
 import org.robolancers321.subsystems.arm.Arm;
+import org.robolancers321.util.MathUtils;
 
 public class MoveToSetpoint extends CommandBase {
+  private Arm arm;
 
   private double anchorPosSetpoint;
   private double floatingPosSetpoint;
-  Arm arm;
 
   public MoveToSetpoint(Arm arm, ArmSetpoints setpoint) {
     this.arm = arm;
-    this.anchorPosSetpoint = setpoint.getAnchor();
-    this.floatingPosSetpoint = setpoint.getFloating();
 
-    addRequirements(arm);
+    this.anchorPosSetpoint = setpoint.anchor;
+    this.floatingPosSetpoint = setpoint.floating;
   }
 
   @Override
   public void initialize() {
-    arm.periodicIO.anchorPosSetpoint = anchorPosSetpoint;
-    arm.periodicIO.floatingPosSetpoint = floatingPosSetpoint;
+    arm.anchorSetpoint = anchorPosSetpoint;
+    arm.floatingSetpoint = floatingPosSetpoint;
 
     // MOTION PROFILE
     // arm.periodicIO.anchorProfile = new TrapezoidProfile(
@@ -41,7 +43,9 @@ public class MoveToSetpoint extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return arm.getAnchorAngle() == anchorPosSetpoint
-        && arm.getFloatingAngle() == floatingPosSetpoint;
+    return (
+      MathUtils.epsilonEquals(anchorPosSetpoint, arm.getAnchorAngle(), Constants.Arm.Anchor.kTolerance) &&
+      MathUtils.epsilonEquals(floatingPosSetpoint, arm.getFloatingAngle(), Constants.Arm.Floating.kTolerance)
+    );
   }
 }
