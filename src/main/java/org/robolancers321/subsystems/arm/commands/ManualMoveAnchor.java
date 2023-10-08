@@ -7,8 +7,8 @@ import org.robolancers321.subsystems.arm.Arm;
 public class ManualMoveAnchor extends CommandBase {
 
   private Arm arm;
+  private double speed = 0.2;
   private boolean reverse;
-  private double offset;
 
   public ManualMoveAnchor(Arm arm, boolean reverse) {
     this.arm = arm;
@@ -19,9 +19,9 @@ public class ManualMoveAnchor extends CommandBase {
   @Override
   public void execute() {
     if (reverse) {
-      arm.periodicIO.anchorPosSetpoint -= offset;
+      arm.setAnchorSpeed(-speed);
     } else {
-      arm.periodicIO.anchorPosSetpoint += offset;
+      arm.setAnchorSpeed(speed);
     }
   }
 }
