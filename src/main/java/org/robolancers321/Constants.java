@@ -3,6 +3,8 @@ package org.robolancers321;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import org.robolancers321.subsystems.arm.InverseArmKinematics;
+import org.robolancers321.util.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -27,7 +29,7 @@ public final class Constants {
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
-      public static final boolean kEnableSoftLimit = true;
+      public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.4; // going down
       public static final int kCurrentLimit = 50; // 40 to 60
@@ -36,15 +38,16 @@ public final class Constants {
         public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final int kSlot = 2;
+        public static final int kSlot = 0;
       }
 
       public static final class FF {
-        public static final double ks = 0;
-        public static final double kg = 0; // gravity FF most likely only tune this gain
-        public static final double kv = 0;
-        public static final double ka = 0;
-        public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+        // change to final when done tuning
+        public static double kS = 0;
+        public static double kG = 0; // gravity FF most likely only tune this gain
+        public static final double kV = 0;
+        public static final double kA = 0;
+        public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
       }
 
       public static final class MP {
@@ -56,33 +59,20 @@ public final class Constants {
 
       public static final class Conversions {
         /*
-        velocity from encoder is encoderRotations/s
-        encoderRotations/s * (mechanismRotations/encoderRotations) * circumference (m) = meters/s
-        m/s what we need for motion profile
+        velocity - motorRot/s
+        motorRot/s * mechRot/motorRot * meters/mechRot = meters/s
         */
 
-        public static final double kGearRatio = 1; // 1 mechRot/n encoderRot
-        public static final double kGearRadius = 0;
+        public static final double kGearRatio = 64; // mechRot/motorRot. TODO check if correct or 1
+        public static final double kGearRadius = 0; // m
         public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
 
         /*
-        Position is encoderRotations
-        encoderRot * (1 mechRot/n encoderRot) * 360 deg/1 mechRot = deg/encoderRot
+        Position - motorRot
+        motorRot * mechRot/motorRot * deg/mechRot = deg
          */
 
         public static final double kDegPerRot = kGearRatio * 360;
-      }
-
-      public enum Setpoints {
-        TEST_ANCHOR_SETPOINT(1, 0);
-
-        public double position;
-        public double velocity;
-
-        Setpoints(double position, double velocity) {
-          this.position = position;
-          this.velocity = velocity;
-        }
       }
     }
 
@@ -91,12 +81,11 @@ public final class Constants {
       public static final int kFloatingEncoderPort = 0;
 
       public static final boolean kInverted = false;
-
       public static final double kFloatingLength = 0;
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
-      public static final boolean kEnableSoftLimit = true;
+      public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.5; // going down
       public static final int kCurrentLimit = 50; // 40 to 60
@@ -105,16 +94,17 @@ public final class Constants {
         public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
-        public static final int kSlot = 2;
+        public static final int kSlot = 0;
       }
 
       public static final class FF {
-        public static final double ks = 0;
-        public static final double kg = 0; // gravity FF most likely only tune this gain
-        public static final double kv = 0;
-        public static final double ka = 0;
+        // change to final when done tuning
+        public static double kS = 0;
+        public static double kG = 0; // gravity FF most likely only tune this gain
+        public static final double kV = 0;
+        public static final double kA = 0;
         public static final ArmFeedforward FLOATING_FEEDFORWARD =
-            new ArmFeedforward(ks, kg, kv, ka);
+            new ArmFeedforward(kS, kG, kV, kA);
       }
 
       public static final class MP {
@@ -125,29 +115,39 @@ public final class Constants {
       }
 
       public static final class Conversions {
-        /*
-        velocity from encoder is encoderRotations/s
-        encoderRotations/s * (1 mechanismRotations/encoderRotations) * circumference (m) = meters/s
-        m/s what we need for motion profile
-        */
-
-        public static final double kGearRatio = 1;
+        public static final double kGearRatio = 25; // mechRot/motorRot. TODO check if correct or 1
         public static final double kGearRadius = 0; // m
         public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
         public static final double kDegPerRot = kGearRatio * 360;
       }
+    }
 
-      // TODO fix this from arm setpoint vel & pos to goal setpoint for inverse kinematics
-      public static enum Setpoints {
-        TEST_FLOATING_SETPOINT(1, 0);
+    public enum ArmSetpoints {
+      // TODO make this flow better. kinda confusing
+      TEST_SETPOINT(0, 0);
 
-        public double position;
-        public double velocity;
+      private double anchor;
+      private double floating;
 
-        Setpoints(double position, double velocity) {
-          this.position = position;
-          this.velocity = velocity;
-        }
+      ArmSetpoints(double dZ, double dY) {
+        this.convert(null, 0, dZ, dY);
+      }
+
+      public void convert(String name, double offset, double dZ, double dY) {
+        // convert goal setpoint to angles
+        InverseArmKinematics setpoint =
+            new InverseArmKinematics(new RelativePlane(name, offset), dZ, dY);
+        InverseArmKinematics.Angles angles = setpoint.getAngles();
+        this.anchor = angles.getAnchorAngle();
+        this.floating = angles.getFloatingAngle();
+      }
+
+      public double getAnchor() {
+        return this.anchor;
+      }
+
+      public double getFloating() {
+        return this.floating;
       }
     }
   }
