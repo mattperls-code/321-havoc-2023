@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
@@ -109,6 +108,14 @@ public class Arm extends SubsystemBase {
     return floatingEncoder.getVelocity();
   }
 
+  public void setAnchorSpeed(double speed) {
+    anchorMotor.set(speed);
+  }
+
+  public void setFloatingSpeed(double speed) {
+    floatingMotor.set(speed);
+  }
+
   public void initTuneControllers() {
     SmartDashboard.putNumber(
         "anchorKP", SmartDashboard.getNumber("anchorKP", Constants.Arm.Anchor.PID.kP));
@@ -172,14 +179,13 @@ public class Arm extends SubsystemBase {
     public double floatingFF = 0.0;
 
     // MOTION PROFILE
-    public TrapezoidProfile anchorProfile =
-        new TrapezoidProfile(
-            Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
-    public TrapezoidProfile floatingProfile =
-        new TrapezoidProfile(
-            Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new TrapezoidProfile.State());
-    public double anchorProfileStartTime = 0.0;
-    public double floatingProfileStartTime = 0.0;
+    // public TrapezoidProfile anchorProfile = new
+    // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
+    // public TrapezoidProfile floatingProfile = new
+    // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new
+    // TrapezoidProfile.State());
+    // public double anchorProfileStartTime = 0.0;
+    // public double floatingProfileStartTime = 0.0;
   }
 
   @Override

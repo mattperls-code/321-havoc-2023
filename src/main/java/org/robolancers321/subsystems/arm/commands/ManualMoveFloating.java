@@ -7,7 +7,7 @@ import org.robolancers321.subsystems.arm.Arm;
 public class ManualMoveFloating extends CommandBase {
 
   private Arm arm;
-  private double offset = 1;
+  private double speed = 0.2;
   private boolean reverse;
 
   public ManualMoveFloating(Arm arm, boolean reverse) {
@@ -19,9 +19,9 @@ public class ManualMoveFloating extends CommandBase {
   @Override
   public void execute() {
     if (reverse) {
-      arm.periodicIO.floatingPosSetpoint -= offset;
+      arm.setFloatingSpeed(-speed);
     } else {
-      arm.periodicIO.floatingPosSetpoint += offset;
+      arm.setFloatingSpeed(speed);
     }
   }
 }
