@@ -129,8 +129,8 @@ public final class Constants {
     public enum ArmSetpoints {
       TEST(0, 0);
 
-      public final double anchor;
-      public final double floating;
+      public double anchor;
+      public double floating;
 
       ArmSetpoints(double y, double z){
         InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
