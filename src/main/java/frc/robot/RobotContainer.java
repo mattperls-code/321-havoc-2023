@@ -38,22 +38,29 @@ public class RobotContainer {
     );
 
     public RobotContainer() {
-        // swerve.setDefaultCommand(swerve.drive(
-        //     driver::getLeftX,
-        //     () -> -driver.getLeftY(),
-        //     driver::getRightX,
-        //     true,
-        //     Constants.kPeriodSeconds
-        // ));
+        swerve.setDefaultCommand(swerve.drive(
+            driver::getLeftX,
+            () -> kMaxSpeedMetersPerSecond * -driver.getLeftY(),
+            driver::getRightX,
+            // () -> 0, () -> 0, () -> Math.hypot(driver.getLeftX(), driver.getLeftY()) > 0.5 ? Math.atan2(driver.getLeftX(), driver.getLeftY()) : 0,
+            true,
+            Constants.kPeriodSeconds
+        ));
 
-        SmartDashboard.putNumber("angleSetpointDeg", 0.0);
-        SmartDashboard.putNumber("veloSetpointDeg", 0.0);
+        // SmartDashboard.putNumber("angleSetpointDeg", 0.0);
+        // SmartDashboard.putNumber("veloSetpointDeg", 0.0);
 
-        swerve.setDefaultCommand(swerve.run(() ->
-            swerve.setModuleState(0, new SwerveModuleState(
-                SmartDashboard.getNumber("veloSetpointMetersPerSecond", 0.0),
-                Rotation2d.fromDegrees(setpoint)
-        ))));
+        // swerve.setDefaultCommand(swerve.run(() -> {
+        //     var angle = Math.atan2(driver.getLeftX(), driver.getLeftY());
+        //     SmartDashboard.putNumber("controllerSetpointDeg", Math.toDegrees(angle));
+        //     var state = new SwerveModuleState(
+        //         SmartDashboard.getNumber("veloSetpointMetersPerSecond", 0.0),
+        //         Rotation2d.fromRadians(angle));
+
+        //     swerve.setModuleStates(new SwerveModuleState[] {
+        //         state, state, state, state
+        //     });
+        // }));
 
         configureBindings();
     }

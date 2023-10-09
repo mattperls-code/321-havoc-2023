@@ -47,6 +47,8 @@ public class Swerve extends SubsystemBase {
         );
 
         initModulePID();
+
+        gyro.zeroYaw();
     }
 
     @Override
@@ -77,7 +79,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.getNumber("kTurnFF", Turn.kFF)
         );
 
-        modules.get(0).update();
+        modules.forEach(SwerveModule::update);
     }
 
     public CommandBase drive(DoubleSupplier throttle, DoubleSupplier strafe, DoubleSupplier turn,
