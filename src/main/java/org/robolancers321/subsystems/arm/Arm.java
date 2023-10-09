@@ -8,8 +8,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
@@ -123,11 +123,17 @@ public class Arm extends SubsystemBase {
   }
 
   public void setAnchorControllerReference(double reference, double ff) {
-    anchorPIDController.setReference(reference, ControlType.kPosition, Constants.Arm.Anchor.PID.kSlot, ff, ArbFFUnits.kVoltage);
+    anchorPIDController.setReference(
+        reference, ControlType.kPosition, Constants.Arm.Anchor.PID.kSlot, ff, ArbFFUnits.kVoltage);
   }
 
   public void setFloatingControllerReference(double reference, double ff) {
-    floatingPIDController.setReference(reference, ControlType.kPosition, Constants.Arm.Floating.PID.kSlot, ff, ArbFFUnits.kVoltage);
+    floatingPIDController.setReference(
+        reference,
+        ControlType.kPosition,
+        Constants.Arm.Floating.PID.kSlot,
+        ff,
+        ArbFFUnits.kVoltage);
   }
 
   private void initTuneControllers() {
@@ -197,7 +203,8 @@ public class Arm extends SubsystemBase {
 
   //   // MOTION PROFILE
   //   // public TrapezoidProfile anchorProfile = new
-  //   // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
+  //   // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new
+  // TrapezoidProfile.State());
   //   // public TrapezoidProfile floatingProfile = new
   //   // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new
   //   // TrapezoidProfile.State());

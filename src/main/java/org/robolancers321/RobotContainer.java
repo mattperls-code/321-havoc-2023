@@ -17,7 +17,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     this.arm.setDefaultCommand(new RunArm(arm));
-    
+
     configureBindings();
 
     try {

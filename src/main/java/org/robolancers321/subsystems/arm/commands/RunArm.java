@@ -16,17 +16,14 @@ public class RunArm extends CommandBase {
 
   @Override
   public void execute() {
-    double anchorFF = Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(arm.anchorSetpoint), 0);
-    arm.setAnchorControllerReference(
-      arm.anchorSetpoint,
-      anchorFF
-    );
+    double anchorFF =
+        Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(arm.anchorSetpoint), 0);
+    arm.setAnchorControllerReference(arm.anchorSetpoint, anchorFF);
 
-    double floatingFF = Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(Math.toRadians(arm.floatingSetpoint), 0);
-    arm.setFloatingControllerReference(
-      arm.floatingSetpoint,
-      floatingFF
-    );
+    double floatingFF =
+        Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
+            Math.toRadians(arm.floatingSetpoint), 0);
+    arm.setFloatingControllerReference(arm.floatingSetpoint, floatingFF);
 
     // MOTION PROFILE
     // TrapezoidProfile.State anchorProfileState =

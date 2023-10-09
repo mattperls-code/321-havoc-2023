@@ -132,7 +132,7 @@ public final class Constants {
       public double anchor;
       public double floating;
 
-      ArmSetpoints(double y, double z){
+      ArmSetpoints(double y, double z) {
         InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
 
         this.anchor = angles.anchor;

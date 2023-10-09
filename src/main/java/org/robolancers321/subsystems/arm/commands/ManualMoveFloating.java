@@ -13,7 +13,7 @@ public class ManualMoveFloating extends CommandBase {
   public ManualMoveFloating(Arm arm, boolean reverse) {
     this.arm = arm;
     this.reverse = reverse;
-    
+
     addRequirements(arm);
   }
 

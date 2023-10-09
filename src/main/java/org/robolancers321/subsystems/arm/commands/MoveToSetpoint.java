@@ -2,7 +2,6 @@
 package org.robolancers321.subsystems.arm.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import org.robolancers321.Constants;
 import org.robolancers321.Constants.Arm.ArmSetpoints;
 import org.robolancers321.subsystems.arm.Arm;
@@ -43,9 +42,9 @@ public class MoveToSetpoint extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (
-      MathUtils.epsilonEquals(anchorPosSetpoint, arm.getAnchorAngle(), Constants.Arm.Anchor.kTolerance) &&
-      MathUtils.epsilonEquals(floatingPosSetpoint, arm.getFloatingAngle(), Constants.Arm.Floating.kTolerance)
-    );
+    return (MathUtils.epsilonEquals(
+            anchorPosSetpoint, arm.getAnchorAngle(), Constants.Arm.Anchor.kTolerance)
+        && MathUtils.epsilonEquals(
+            floatingPosSetpoint, arm.getFloatingAngle(), Constants.Arm.Floating.kTolerance));
   }
 }

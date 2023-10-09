@@ -19,10 +19,7 @@ public class InverseArmKinematics {
 
   private static double calculateBeta(double y, double z) {
     double top =
-        (Math.pow(z, 2)
-            + Math.pow(y, 2)
-            - Math.pow(anchorLength, 2)
-            - Math.pow(floatLength, 2));
+        (Math.pow(z, 2) + Math.pow(y, 2) - Math.pow(anchorLength, 2) - Math.pow(floatLength, 2));
 
     double bottom = (2 * anchorLength * floatLength);
 
@@ -35,7 +32,7 @@ public class InverseArmKinematics {
     return Math.asin(y / reach) + Math.asin(floatLength * Math.sin(beta) / reach);
   }
 
-  public static Output calculate(double y, double z){
+  public static Output calculate(double y, double z) {
     double beta = calculateBeta(y, z);
     double alpha = calculateAlpha(beta, y, z);
 
