@@ -77,7 +77,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.getNumber("kTurnFF", Turn.kFF)
         );
 
-        modules.forEach(SwerveModule::update);
+        modules.get(0).update();
     }
 
     public CommandBase drive(DoubleSupplier throttle, DoubleSupplier strafe, DoubleSupplier turn,

@@ -23,7 +23,6 @@ public class SwerveModule {
     private final CANCoder turnEncoder;
 
     private final SparkMaxPIDController driveController;
-    // private final SparkMaxPIDController turnController;
     private final PIDController turnController;
 
     public SwerveModule(ModuleConfig config) {
@@ -34,7 +33,6 @@ public class SwerveModule {
         this.turnEncoder = new CANCoder(config.kTurnEncoderId);
 
         this.driveController = driveMotor.getPIDController();
-        // this.turnController = turnMotor.getPIDController();
         this.turnController = new PIDController(Turn.kP, Turn.kI, Turn.kD);
 
         configMotors();
@@ -43,9 +41,7 @@ public class SwerveModule {
     }
 
     public void update() {
-        var output = turnController.calculate(
-            turnEncoder.getAbsolutePosition(), Math.toRadians(SmartDashboard.getNumber("targetAngleDeg", 0)));
-            // + SmartDashboard.getNumber("kTurnFF", Turn.kFF);
+        var output = turnController.calculate(turnEncoder.getAbsolutePosition());
             
         SmartDashboard.putNumber("output", output);
         SmartDashboard.putNumber("setpoint", turnController.getSetpoint());
@@ -57,7 +53,6 @@ public class SwerveModule {
         var optimizedState = SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
 
         driveController.setReference(optimizedState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
-        // turnController.setReference(optimizedState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
         turnController.setSetpoint(optimizedState.angle.getRadians());
 
         SmartDashboard.putNumber("targetAngleDeg", optimizedState.angle.getDegrees());
@@ -72,10 +67,6 @@ public class SwerveModule {
     }
     public void setTurnPIDFCoeffs(double p, double i, double d, double f) {
         this.turnController.setPID(p, i, d);
-        // this.turnController.setP(p);
-        // this.turnController.setI(i);
-        // this.turnController.setD(d);
-        // this.turnController.setFF(f);
     }
 
     public SwerveModulePosition getPosition() {
@@ -123,8 +114,5 @@ public class SwerveModule {
         setTurnPIDFCoeffs(Turn.kP, Turn.kI, Turn.kD, Turn.kFF);
 
         turnController.enableContinuousInput(-Math.PI, Math.PI);
-        // turnController.setPositionPIDWrappingEnabled(true);
-        // turnController.setPositionPIDWrappingMaxInput(Math.PI);
-        // turnController.setPositionPIDWrappingMinInput(-Math.PI);
     }
 }
