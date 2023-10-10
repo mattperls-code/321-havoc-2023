@@ -5,23 +5,24 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.robolancers321.subsystems.arm.Arm;
 
 public class ManualMoveAnchor extends CommandBase {
-
   private Arm arm;
+
+  private double speed = 0.2;
   private boolean reverse;
-  private double offset;
 
   public ManualMoveAnchor(Arm arm, boolean reverse) {
     this.arm = arm;
     this.reverse = reverse;
+
     addRequirements(arm);
   }
 
   @Override
   public void execute() {
     if (reverse) {
-      arm.periodicIO.anchorPosSetpoint -= offset;
+      arm.setAnchorSpeed(-speed);
     } else {
-      arm.periodicIO.anchorPosSetpoint += offset;
+      arm.setAnchorSpeed(speed);
     }
   }
 }

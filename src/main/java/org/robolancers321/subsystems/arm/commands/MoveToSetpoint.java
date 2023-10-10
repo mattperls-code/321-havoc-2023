@@ -3,57 +3,48 @@ package org.robolancers321.subsystems.arm.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.robolancers321.Constants;
+import org.robolancers321.Constants.Arm.ArmSetpoints;
 import org.robolancers321.subsystems.arm.Arm;
+import org.robolancers321.util.MathUtils;
 
 public class MoveToSetpoint extends CommandBase {
+  private Arm arm;
 
-  private final double anchorPosSetpoint;
-  private final double anchorVelSetpoint;
-  private final double floatingPosSetpoint;
-  private final double floatingVelSetpoint;
-  Arm arm;
+  private double anchorPosSetpoint;
+  private double floatingPosSetpoint;
 
-  public MoveToSetpoint(
-      Arm arm,
-      Constants.Arm.Anchor.Setpoints anchorSetpoint,
-      Constants.Arm.Floating.Setpoints floatingSetpoint) {
-    this.anchorPosSetpoint = anchorSetpoint.position;
-    this.anchorVelSetpoint = anchorSetpoint.velocity;
-    this.floatingPosSetpoint = floatingSetpoint.position;
-    this.floatingVelSetpoint = floatingSetpoint.position;
+  public MoveToSetpoint(Arm arm, ArmSetpoints setpoint) {
     this.arm = arm;
 
-    addRequirements(arm);
+    this.anchorPosSetpoint = setpoint.anchor;
+    this.floatingPosSetpoint = setpoint.floating;
   }
 
   @Override
   public void initialize() {
-    // update setpoint Pos & Vel
-    arm.periodicIO.anchorPosSetpoint = anchorPosSetpoint;
-    arm.periodicIO.anchorVelSetpoint = anchorVelSetpoint;
-    arm.periodicIO.floatingPosSetpoint = floatingPosSetpoint;
-    arm.periodicIO.floatingVelSetpoint = floatingVelSetpoint;
+    arm.anchorSetpoint = anchorPosSetpoint;
+    arm.floatingSetpoint = floatingPosSetpoint;
 
-    // //MOTION PROFILE
-    // //create new MP with setpoints & get startTime
-    // arm.periodicIO.anchorProfile = new
-    // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS,
-    // new TrapezoidProfile.State(anchorPosSetpoint, anchorVelSetpoint), new
-    // TrapezoidProfile.State(arm.getAnchorAngle(), arm.getAnchorVelocity()));
-    // arm.periodicIO.floatingProfile = new
-    // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS,
-    // new TrapezoidProfile.State(floatingPosSetpoint, floatingVelSetpoint), new
-    // TrapezoidProfile.State(arm.getFloatingAngle(), arm.getFloatingVelocity()));
+    // MOTION PROFILE
+    // arm.periodicIO.anchorProfile = new TrapezoidProfile(
+    //   Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS,
+    //   new TrapezoidProfile.State(anchorPosSetpoint, 0),
+    //   new TrapezoidProfile.State(arm.getAnchorAngle(), arm.getAnchorVelocity()));
+
+    // arm.periodicIO.floatingProfile = new TrapezoidProfile(
+    //    Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS,
+    //    new TrapezoidProfile.State(floatingPosSetpoint, 0),
+    //    new TrapezoidProfile.State(arm.getFloatingAngle(), arm.getFloatingVelocity()));
+
     // arm.periodicIO.anchorProfileStartTime = Timer.getFPGATimestamp();
     // arm.periodicIO.floatingProfileStartTime = Timer.getFPGATimestamp();
-
   }
 
   @Override
   public boolean isFinished() {
-    return arm.getAnchorVelocity() == anchorVelSetpoint
-        && arm.getAnchorAngle() == anchorPosSetpoint
-        && arm.getFloatingVelocity() == floatingVelSetpoint
-        && arm.getFloatingAngle() == floatingPosSetpoint;
+    return (MathUtils.epsilonEquals(
+            anchorPosSetpoint, arm.getAnchorAngle(), Constants.Arm.Anchor.kTolerance)
+        && MathUtils.epsilonEquals(
+            floatingPosSetpoint, arm.getFloatingAngle(), Constants.Arm.Floating.kTolerance));
   }
 }
