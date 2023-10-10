@@ -3,6 +3,7 @@ package org.robolancers321.subsystems.arm;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
@@ -18,8 +19,8 @@ public class Arm extends SubsystemBase {
   private CANSparkMax anchorMotor;
   private CANSparkMax floatingMotor;
 
-  private AbsoluteEncoder anchorEncoder;
-  private AbsoluteEncoder floatingEncoder;
+  private RelativeEncoder anchorEncoder;
+  private RelativeEncoder floatingEncoder;
 
   private SparkMaxPIDController anchorPIDController;
   private SparkMaxPIDController floatingPIDController;
@@ -32,12 +33,12 @@ public class Arm extends SubsystemBase {
 
   public Arm() {
     this.anchorMotor = new CANSparkMax(Constants.Arm.Anchor.kAnchorPort, MotorType.kBrushless);
-    this.anchorEncoder = anchorMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.anchorEncoder = anchorMotor.getEncoder();
     this.anchorPIDController = this.anchorMotor.getPIDController();
 
     this.floatingMotor =
         new CANSparkMax(Constants.Arm.Floating.kFloatingPort, MotorType.kBrushless);
-    this.floatingEncoder = floatingMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.floatingEncoder = floatingMotor.getEncoder();
     this.floatingPIDController = this.floatingMotor.getPIDController();
 
     configureMotors();
@@ -45,7 +46,7 @@ public class Arm extends SubsystemBase {
     configureControllers();
 
     // this.periodicIO = new PeriodicIO();
-    // initTuneControllers();
+    initTuneControllers();
   }
 
   private void configureMotors() {
@@ -74,10 +75,10 @@ public class Arm extends SubsystemBase {
 
   private void configureEncoders() {
     anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegPerRot);
-    anchorEncoder.setZeroOffset(Constants.Arm.Anchor.kZeroPosition);
+    anchorEncoder.setPosition(Constants.Arm.Anchor.kZeroPosition);
 
     floatingEncoder.setPositionConversionFactor(Constants.Arm.Floating.Conversions.kDegPerRot);
-    floatingEncoder.setZeroOffset(Constants.Arm.Floating.kZeroPosition);
+    floatingEncoder.setPosition(Constants.Arm.Floating.kZeroPosition);
 
     // only need for Motion Profile
     // anchorEncoder.setVelocityConversionFactor(Constants.Arm.Anchor.Conversions.kDistPerRot);
@@ -166,8 +167,12 @@ public class Arm extends SubsystemBase {
     double anchorKG = SmartDashboard.getEntry("anchorKG").getDouble(0);
     double anchorKS = SmartDashboard.getEntry("anchorKS").getDouble(0);
 
-    SmartDashboard.putNumber("Pos", this.getAnchorAngle());
+    InverseArmKinematics.Output angles = InverseArmKinematics.calculate(46, 63);
+
+    SmartDashboard.putNumber("currentAnchorPos", this.getAnchorAngle());
     SmartDashboard.putNumber("Output", this.anchorMotor.getAppliedOutput());
+    SmartDashboard.putNumber("anchorSetpoint", angles.anchor);
+    SmartDashboard.putNumber("floatingSetpoint", angles.floating);
 
     this.anchorPIDController.setP(anchorKP);
     this.anchorPIDController.setI(anchorKI);
@@ -214,6 +219,6 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // tuneControllers();
+    tuneControllers();
   }
 }

@@ -16,19 +16,19 @@ public class RobotContainer {
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
 
   public RobotContainer() {
-    this.arm.setDefaultCommand(new RunArm(arm));
+    // this.arm.setDefaultCommand(new RunArm(arm));
 
     configureBindings();
 
-    try {
-      String versionData = new VersionLoader().getVersionData().toString();
-      System.out.println(versionData);
-      SmartDashboard.putString("VERSION_DATA", versionData);
+    // try {
+    //   String versionData = new VersionLoader().getVersionData().toString();
+    //   System.out.println(versionData);
+    //   SmartDashboard.putString("VERSION_DATA", versionData);
 
-    } catch (FileNotFoundException ex) {
-      System.out.println("VERSIONING FILE NOT FOUND");
-      SmartDashboard.putString("VERSION_DATA", "VERSIONING FILE NOT FOUND");
-    }
+    // } catch (FileNotFoundException ex) {
+    //   System.out.println("VERSIONING FILE NOT FOUND");
+    //   SmartDashboard.putString("VERSION_DATA", "VERSIONING FILE NOT FOUND");
+    // }
   }
 
   private void configureBindings() {}
