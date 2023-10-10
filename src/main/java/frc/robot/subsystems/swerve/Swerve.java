@@ -49,6 +49,7 @@ public class Swerve extends SubsystemBase {
         initModulePID();
 
         gyro.zeroYaw();
+        gyro.setAngleAdjustment(90.0);
     }
 
     @Override
@@ -94,6 +95,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] states) {
+        for(int i = 0;i<4;i++) SmartDashboard.putNumber("pod " + i + " desired speed", states[i].speedMetersPerSecond);
         for (int i = 0; i < modules.size(); i++) modules.get(i).setDesiredState(states[i]);
     }
 
@@ -124,12 +126,12 @@ public class Swerve extends SubsystemBase {
 
     private ChassisSpeeds chassisSpeedsFromInputs(double throttle, double strafe, double turn,
                                                 boolean fieldRelative, double periodSeconds) {
-        return ChassisSpeedsUtil.discretize(
+        return // ChassisSpeedsUtil.discretize(
             fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
                 throttle, strafe, turn, gyro.getRotation2d())
-            : new ChassisSpeeds(throttle, strafe, gyro.getRate()),
-            periodSeconds);
+            : new ChassisSpeeds(throttle, strafe, gyro.getRate());
+            // periodSeconds);
     }
 
     private SwerveModuleState[] statesFromChassisSpeeds(ChassisSpeeds speeds) {
@@ -146,10 +148,10 @@ public class Swerve extends SubsystemBase {
     }
 
     private void initModulePID() {
-        SmartDashboard.putNumber("kDriveP", Turn.kP);
-        SmartDashboard.putNumber("kDriveI", Turn.kI);
-        SmartDashboard.putNumber("kDriveD", Turn.kD);
-        SmartDashboard.putNumber("kDriveFF", Turn.kFF);
+        SmartDashboard.putNumber("kDriveP", Drive.kP);
+        SmartDashboard.putNumber("kDriveI", Drive.kI);
+        SmartDashboard.putNumber("kDriveD", Drive.kD);
+        SmartDashboard.putNumber("kDriveFF", Drive.kFF);
 
         SmartDashboard.putNumber("kTurnP", Turn.kP);
         SmartDashboard.putNumber("kTurnI", Turn.kI);
