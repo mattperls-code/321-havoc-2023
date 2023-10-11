@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
@@ -27,6 +28,10 @@ public class Arm extends SubsystemBase {
   // TODO: potentially should use explicit getters and setters
   public double anchorSetpoint = Constants.Arm.Anchor.kZeroPosition;
   public double floatingSetpoint = Constants.Arm.Floating.kZeroPosition;
+  public TrapezoidProfile.State anchorState =
+      new TrapezoidProfile.State(Constants.Arm.Anchor.kZeroPosition, 0);
+  public TrapezoidProfile.State floatingState =
+      new TrapezoidProfile.State(Constants.Arm.Floating.kZeroPosition, 0);
 
   // public PeriodicIO periodicIO;
 
@@ -136,6 +141,22 @@ public class Arm extends SubsystemBase {
         ArbFFUnits.kVoltage);
   }
 
+  public TrapezoidProfile.State getAnchorState() {
+    return this.anchorState = new TrapezoidProfile.State(this.getAnchorAngle(), 0);
+  }
+
+  public void setAnchorState(double position, double velocity) {
+    this.anchorState = new TrapezoidProfile.State(position, velocity);
+  }
+
+  public TrapezoidProfile.State getFloatingState() {
+    return this.floatingState = new TrapezoidProfile.State(this.getFloatingAngle(), 0);
+  }
+
+  public void setFloatingState(double position, double velocity) {
+    this.floatingState = new TrapezoidProfile.State(position, velocity);
+  }
+
   private void initTuneControllers() {
     SmartDashboard.putNumber(
         "anchorKP", SmartDashboard.getNumber("anchorKP", Constants.Arm.Anchor.PID.kP));
@@ -194,23 +215,6 @@ public class Arm extends SubsystemBase {
     // periodicIO.floatingPosSetpoint = setpoint;
     // Constants.Arm.Floating.FF.kS = floatingKS;
   }
-
-  // public static class PeriodicIO {
-  //   public double anchorPosSetpoint = Constants.Arm.Anchor.kZeroPosition;
-  //   public double floatingPosSetpoint = Constants.Arm.Floating.kZeroPosition;
-  //   public double anchorFF = 0.0;
-  //   public double floatingFF = 0.0;
-
-  //   // MOTION PROFILE
-  //   // public TrapezoidProfile anchorProfile = new
-  //   // TrapezoidProfile(Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS, new
-  // TrapezoidProfile.State());
-  //   // public TrapezoidProfile floatingProfile = new
-  //   // TrapezoidProfile(Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS, new
-  //   // TrapezoidProfile.State());
-  //   // public double anchorProfileStartTime = 0.0;
-  //   // public double floatingProfileStartTime = 0.0;
-  // }
 
   @Override
   public void periodic() {
