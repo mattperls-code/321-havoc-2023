@@ -7,6 +7,7 @@ import org.robolancers321.subsystems.arm.Arm;
 
 public class RunArm extends CommandBase {
   private Arm arm;
+  private double profileDT = 0.02;
 
   public RunArm(Arm arm) {
     this.arm = arm;
@@ -16,6 +17,7 @@ public class RunArm extends CommandBase {
 
   @Override
   public void execute() {
+    // PID
     double anchorFF =
         Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(arm.anchorSetpoint), 0);
     arm.setAnchorControllerReference(arm.anchorSetpoint, anchorFF);
@@ -26,32 +28,36 @@ public class RunArm extends CommandBase {
     arm.setFloatingControllerReference(arm.floatingSetpoint, floatingFF);
 
     // MOTION PROFILE
-    // TrapezoidProfile.State anchorProfileState =
-    // arm.periodicIO.anchorProfile.calculate(Timer.getFPGATimestamp() -
-    // arm.periodicIO.anchorProfileStartTime);
 
-    // TrapezoidProfile.State floatingProfileState =
-    // arm.periodicIO.floatingProfile.calculate(Timer.getFPGATimestamp() -
-    // arm.periodicIO.floatingProfileStartTime);
+    // create motion profile to setpoint goal assuming joints are still. Feeding current angle in
+    // the case the arm moves without being commanded ex. getting hit hard.
+    // var anchorProfile =
+    //     new TrapezoidProfile(
+    //         Constants.Arm.Anchor.MP.ANCHOR_CONSTRAINTS,
+    //         new TrapezoidProfile.State(arm.anchorSetpoint, 0),
+    //         arm.getAnchorState());
 
-    // arm.periodicIO.anchorFF =
-    // Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(anchorProfileState.position),
-    // anchorProfileState.velocity);
-    // arm.periodicIO.floatingFF =
-    // Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(Math.toRadians(floatingProfileState.position),
-    // floatingProfileState.velocity);
+    // var floatingProfile =
+    //     new TrapezoidProfile(
+    //         Constants.Arm.Floating.MP.FLOATING_CONSTRAINTS,
+    //         new TrapezoidProfile.State(arm.floatingSetpoint, 0),
+    //         arm.getFloatingState());
 
-    // arm.floatingPIDController.setReference(
-    //   floatingProfileState.position,
-    //   ControlType.kPosition,
-    //   Constants.Arm.Floating.PID.kSlot,
-    //   arm.periodicIO.floatingFF,
-    //   SparkMaxPIDController.ArbFFUnits.kVoltage);
-    // arm.anchorPIDController.setReference(
-    //   anchorProfileState.position,
-    //   ControlType.kPosition,
-    //   Constants.Arm.Anchor.PID.kSlot,
-    //   arm.periodicIO.anchorFF,
-    //   SparkMaxPIDController.ArbFFUnits.kVoltage);
+    // // update current state based on timestamp
+    // arm.anchorState = anchorProfile.calculate(profileDT);
+    // arm.floatingState = floatingProfile.calculate(profileDT);
+
+    // // on loop, these states are the new inital state for the profile
+
+    // double anchorFF =
+    //     Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(
+    //         Math.toRadians(arm.anchorState.position), 0);
+    // arm.setAnchorControllerReference(arm.anchorState.position, anchorFF);
+
+    // double floatingFF =
+    //     Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
+    //         Math.toRadians(arm.floatingState.position), 0);
+    // arm.setFloatingControllerReference(arm.floatingState.position, floatingFF);
+
   }
 }
