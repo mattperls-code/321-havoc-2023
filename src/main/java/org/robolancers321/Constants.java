@@ -26,10 +26,10 @@ public final class Constants {
 
       public static final boolean kInverted = true;
       public static final double kAnchorLength = 40;
-      public static final double kZeroPosition = 0;
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
-      public static final boolean kEnableSoftLimit = false;
+      public static final double kZeroPosition = -80;
+      public static final double kMinAngle = -80;
+      public static final double kMaxAngle = 0;
+      public static final boolean kEnableSoftLimit = true;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.4; // going down
       public static final int kCurrentLimit = 50; // 40 to 60
@@ -48,7 +48,7 @@ public final class Constants {
         public static double kG = 0; // gravity FF most likely only tune this gain
         public static final double kV = 0;
         public static final double kA = 0;
-        public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
+        public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
       }
 
       public static final class MP {
@@ -69,9 +69,9 @@ public final class Constants {
 
       public static final boolean kInverted = true;
       public static final double kFloatingLength = 30.5;
-      public static final double kZeroPosition = 0;
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kZeroPosition = -75.7;
+      public static final double kMinAngle = -75.7;
+      public static final double kMaxAngle = 0;
       public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 0.5; // going up
       public static final double kMinOutput = -0.5; // going down

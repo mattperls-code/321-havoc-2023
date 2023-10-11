@@ -11,6 +11,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
@@ -181,8 +183,8 @@ public class Arm extends SubsystemBase {
     // periodicIO.anchorPosSetpoint = setpoint;
     this.anchorSetpoint = setpoint;
 
-    Constants.Arm.Anchor.FF.kG = anchorKG;
-    Constants.Arm.Anchor.FF.kS = anchorKS;
+    Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD = new ArmFeedforward(anchorKS, anchorKG, 0);
+
 
     // double setpoint = SmartDashboard.getEntry("setpointPos").getDouble(0);
     // double floatingKP = SmartDashboard.getEntry("floating KP").getDouble(0);

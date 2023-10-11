@@ -16,7 +16,7 @@ public class RobotContainer {
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
 
   public RobotContainer() {
-    // this.arm.setDefaultCommand(new RunArm(arm));
+    this.arm.setDefaultCommand(new RunArm(arm));
 
     configureBindings();
 
