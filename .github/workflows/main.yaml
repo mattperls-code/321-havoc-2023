@@ -38,7 +38,10 @@ jobs:
     steps:
 
       - uses: actions/checkout@v3
-        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+        with:
+          fetch-depth: 0
+
+
 
 
       - name: Grant execute permission for gradlew
