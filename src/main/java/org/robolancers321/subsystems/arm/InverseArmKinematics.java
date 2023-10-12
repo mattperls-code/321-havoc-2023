@@ -33,8 +33,8 @@ public class InverseArmKinematics {
   }
 
   public static Output calculate(double y, double z) {
-    double beta = calculateBeta(y, z);
-    double alpha = calculateAlpha(beta, y, z);
+    double beta = Math.toDegrees(calculateBeta(y, z));
+    double alpha = Math.toDegrees(calculateAlpha(beta, y, z));
 
     return new Output(alpha, beta);
   }

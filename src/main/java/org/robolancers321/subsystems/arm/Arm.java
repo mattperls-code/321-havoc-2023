@@ -14,15 +14,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
 
-public class Arm extends SubsystemBase {
-  private CANSparkMax anchorMotor;
-  private CANSparkMax floatingMotor;
+public class Arm extends SubsystemBase implements AutoCloseable {
+  private final CANSparkMax anchorMotor;
+  private final CANSparkMax floatingMotor;
 
-  private AbsoluteEncoder anchorEncoder;
-  private AbsoluteEncoder floatingEncoder;
+  private final AbsoluteEncoder anchorEncoder;
+  private final AbsoluteEncoder floatingEncoder;
 
-  private SparkMaxPIDController anchorPIDController;
-  private SparkMaxPIDController floatingPIDController;
+  private final SparkMaxPIDController anchorPIDController;
+  private final SparkMaxPIDController floatingPIDController;
 
   // TODO: potentially should use explicit getters and setters
   public double anchorSetpoint = Constants.Arm.Anchor.kZeroPosition;
@@ -215,5 +215,11 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // tuneControllers();
+  }
+
+  @Override
+  public void close() throws Exception {
+    anchorMotor.close();
+    floatingMotor.close();
   }
 }
