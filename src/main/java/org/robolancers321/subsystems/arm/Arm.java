@@ -11,8 +11,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
-
+import edu.wpi.first.util.*;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
@@ -30,6 +32,11 @@ public class Arm extends SubsystemBase {
   // TODO: potentially should use explicit getters and setters
   public double anchorSetpoint = Constants.Arm.Anchor.kZeroPosition;
   public double floatingSetpoint = Constants.Arm.Floating.kZeroPosition;
+
+  public TrapezoidProfile.State anchorState =
+      new TrapezoidProfile.State(Constants.Arm.Anchor.kZeroPosition, 0);
+  public TrapezoidProfile.State floatingState =
+      new TrapezoidProfile.State(Constants.Arm.Floating.kZeroPosition, 0);
 
   // public PeriodicIO periodicIO;
 
@@ -125,6 +132,22 @@ public class Arm extends SubsystemBase {
     floatingMotor.set(speed);
   }
 
+  public TrapezoidProfile.State getAnchorState() {
+    return this.anchorState = new TrapezoidProfile.State(this.getAnchorAngle(), 0);
+  }
+
+  public void setAnchorState(double position, double velocity) {
+    this.anchorState = new TrapezoidProfile.State(position, velocity);
+  }
+
+  public TrapezoidProfile.State getFloatingState() {
+    return this.floatingState = new TrapezoidProfile.State(this.getFloatingAngle(), 0);
+  }
+
+  public void setFloatingState(double position, double velocity) {
+    this.floatingState = new TrapezoidProfile.State(position, velocity);
+  }
+
   public void setAnchorControllerReference(double reference, double ff) {
     anchorPIDController.setReference(
         reference, ControlType.kPosition, Constants.Arm.Anchor.PID.kSlot, ff, ArbFFUnits.kVoltage);
@@ -157,31 +180,40 @@ public class Arm extends SubsystemBase {
         "floatingKI", SmartDashboard.getNumber("floatingKI", Constants.Arm.Floating.PID.kI));
     SmartDashboard.putNumber(
         "floatingKD", SmartDashboard.getNumber("floatingKD", Constants.Arm.Floating.PID.kD));
-    SmartDashboard.putNumber(
-        "floatingKS", SmartDashboard.getNumber("flotingKS", Constants.Arm.Anchor.FF.kS));
+    
+    SmartDashboard.putNumber("anchorSetpoint", anchorSetpoint);
+    SmartDashboard.putNumber("floatingSetpoint", floatingSetpoint);
   }
 
   private void tuneControllers() {
-    double setpoint = SmartDashboard.getEntry("setpointPos").getDouble(0);
+    double anchorSetpoint = SmartDashboard.getEntry("anchorSetpoint").getDouble(0);
+    double floatingSetpoint = SmartDashboard.getEntry("floatingSetpoint").getDouble(0);
+
     double anchorKP = SmartDashboard.getEntry("anchorKP").getDouble(0);
     double anchorKI = SmartDashboard.getEntry("anchorKI").getDouble(0);
     double anchorKD = SmartDashboard.getEntry("anchorKD").getDouble(0);
     double anchorKG = SmartDashboard.getEntry("anchorKG").getDouble(0);
     double anchorKS = SmartDashboard.getEntry("anchorKS").getDouble(0);
 
-    InverseArmKinematics.Output angles = InverseArmKinematics.calculate(46, 63);
+    double floatingKP = SmartDashboard.getEntry("floatingKP").getDouble(0);
+    double floatingKI = SmartDashboard.getEntry("floatingKI").getDouble(0);
+    double floatingKD = SmartDashboard.getEntry("floatingKD").getDouble(0);
 
     SmartDashboard.putNumber("currentAnchorPos", this.getAnchorAngle());
-    SmartDashboard.putNumber("Output", this.anchorMotor.getAppliedOutput());
-    SmartDashboard.putNumber("anchorSetpoint", angles.anchor);
-    SmartDashboard.putNumber("floatingSetpoint", angles.floating);
+    SmartDashboard.putNumber("anchorOutput", this.anchorMotor.getAppliedOutput());
+    SmartDashboard.putNumber("currentFloatingPos", this.getFloatingAngle());
+    SmartDashboard.putNumber("floatingOutput", this.floatingMotor.getAppliedOutput());
 
-    this.anchorPIDController.setP(anchorKP);
-    this.anchorPIDController.setI(anchorKI);
-    this.anchorPIDController.setD(anchorKD);
+    // this.anchorPIDController.setP(anchorKP);
+    // this.anchorPIDController.setI(anchorKI);
+    // this.anchorPIDController.setD(anchorKD);
 
-    // periodicIO.anchorPosSetpoint = setpoint;
-    this.anchorSetpoint = setpoint;
+    this.floatingPIDController.setP(MathUtil.clamp(floatingKP, 0.0, 3.0));
+    this.floatingPIDController.setI(floatingKI);
+    this.floatingPIDController.setD(floatingKD);
+
+    this.anchorSetpoint = MathUtil.clamp(anchorSetpoint, 16, 95);
+    this.floatingSetpoint = MathUtil.clamp(floatingSetpoint, 22, 180);
 
     Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD = new ArmFeedforward(anchorKS, anchorKG, 0);
 
@@ -195,9 +227,6 @@ public class Arm extends SubsystemBase {
     // SmartDashboard.putNumber("Pos", this.getFloatingAngle());
     // SmartDashboard.putNumber("Output", this.floatingMotor.getAppliedOutput());
 
-    // this.floatingPIDController.setP(floatingKP);
-    // this.floatingPIDController.setI(floatingKI);
-    // this.floatingPIDController.setD(floatingKD);
     // periodicIO.floatingPosSetpoint = setpoint;
     // Constants.Arm.Floating.FF.kS = floatingKS;
   }
