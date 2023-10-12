@@ -20,9 +20,6 @@ import frc.robot.subsystems.swerve.SwerveModule;
 import static frc.robot.Constants.Swerve.*;
 
 public class RobotContainer {
-    // just for tuning, remove later
-    private double setpoint = 0.0;
-
     private final Field2d field = new Field2d();
 
     private final CommandXboxController driver = new CommandXboxController(0);
@@ -51,23 +48,21 @@ public class RobotContainer {
         // SmartDashboard.putNumber("veloSetpointDeg", 0.0);
 
         // swerve.setDefaultCommand(swerve.run(() -> {
-        //     var angle = Math.atan2(driver.getLeftX(), driver.getLeftY());
-        //     SmartDashboard.putNumber("controllerSetpointDeg", Math.toDegrees(angle));
+        //     // var angle = Math.atan2(driver.getLeftX(), driver.getLeftY());
+        //     // SmartDashboard.putNumber("controllerSetpointDeg", Math.toDegrees(angle));
+        //     var velo = driver.getLeftY();
+        //     SmartDashboard.putNumber("controllerSetpointMetersPerSecond", velo);
         //     var state = new SwerveModuleState(
-        //         SmartDashboard.getNumber("veloSetpointMetersPerSecond", 0.0),
-        //         Rotation2d.fromRadians(angle));
+        //         velo,
+        //         Rotation2d.fromRadians(0));
 
-        //     swerve.setModuleStates(new SwerveModuleState[] {
-        //         state, state, state, state
-        //     });
+        //     swerve.setModuleStates(state);
         // }));
 
         configureBindings();
     }
 
-    private void configureBindings() {
-        driver.a().onTrue(Commands.runOnce(() -> this.setpoint = SmartDashboard.getNumber("angleSetpointDeg", 0.0)));
-    }
+    private void configureBindings() {}
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");

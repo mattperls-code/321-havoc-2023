@@ -98,12 +98,14 @@ public final class Constants {
   }
     public static class Swerve {
         public static final class ModuleConfig {
+            public final String id;
             public final int kDriveId;
             public final int kTurnId;
             public final int kTurnEncoderId;
             public final double magOffsetDeg;
 
-            public ModuleConfig(final int driveId, final int turnId, final int turnEncoderId, final double magOffsetDeg) {
+            public ModuleConfig(final String idString, final int driveId, final int turnId, final int turnEncoderId, final double magOffsetDeg) {
+                this.id = idString;
                 this.kDriveId = driveId;
                 this.kTurnId = turnId;
                 this.kTurnEncoderId = turnEncoderId;
@@ -111,23 +113,10 @@ public final class Constants {
             }
         }
 
-        public static final int kFrontLeftDriveId = 2;
-        public static final int kFrontRightDriveId = 4;
-        public static final int kBackLeftDriveId = 7;
-        public static final int kBackRightDriveId = 6;
-        public static final int kFrontLeftTurnId = 9;
-        public static final int kFrontRightTurnId = 3;
-        public static final int kBackLeftTurnId = 8;
-        public static final int kBackRightTurnId = 5;
-        public static final int kFrontLeftTurnEncoderId = 10;
-        public static final int kFrontRightTurnEncoderId = 11;
-        public static final int kBackLeftTurnEncoderId = 13;
-        public static final int kBackRightTurnEncoderId = 12;
-
-        public static final ModuleConfig frontLeft = new ModuleConfig(2, 9, 10, -38.67179683527642);
-        public static final ModuleConfig frontRight = new ModuleConfig(4, 3, 11, -69.08189161938014);
-        public static final ModuleConfig backLeft = new ModuleConfig(7, 8, 13, -8.261702051172689);
-        public static final ModuleConfig backRight = new ModuleConfig(6, 5, 12, -170.59535831198076);
+        public static final ModuleConfig frontLeft = new ModuleConfig("FrontLeft", 2, 9, 10, -38.67179683527642);
+        public static final ModuleConfig frontRight = new ModuleConfig("FrontRight", 4, 3, 11, -69.08189161938014);
+        public static final ModuleConfig backLeft = new ModuleConfig("BackLeft", 7, 8, 13, -8.261702051172689);
+        public static final ModuleConfig backRight = new ModuleConfig("BackRight", 6, 5, 12, -170.59535831198076);
 
         public static final CANCoderConfiguration kCANCoderConfig = new CANCoderConfiguration();
 

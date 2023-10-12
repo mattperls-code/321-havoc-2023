@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.ChassisSpeedsUtil;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
@@ -46,7 +46,7 @@ public class Swerve extends SubsystemBase {
             new Pose2d()
         );
 
-        initModulePID();
+        initModulePIDF();
 
         gyro.zeroYaw();
         gyro.setAngleAdjustment(90.0);
@@ -57,30 +57,23 @@ public class Swerve extends SubsystemBase {
         this.field.setRobotPose(poseEstimator.update(gyro.getRotation2d(), getModulePositions()));
         SmartDashboard.putData("Field", this.field);
 
-        SmartDashboard.putNumber("yaw", gyro.getYaw());
+        SmartDashboard.putNumber("yaw", gyro.getRotation2d().getDegrees());
 
-        SmartDashboard.putNumber("frontLeftSpeed", this.modules.get(0).getState().speedMetersPerSecond);
-        SmartDashboard.putNumber("frontRightSpeed", this.modules.get(1).getState().speedMetersPerSecond);
-        SmartDashboard.putNumber("backLeftSpeed", this.modules.get(2).getState().speedMetersPerSecond);
-        SmartDashboard.putNumber("backRightSpeed", this.modules.get(3).getState().speedMetersPerSecond);
+        modules.forEach(module -> {
+            module.setDrivePIDFCoeffs(
+                SmartDashboard.getNumber("kDriveP", Drive.kP),
+                SmartDashboard.getNumber("kDriveI", Drive.kI),
+                SmartDashboard.getNumber("kDriveD", Drive.kD),
+                SmartDashboard.getNumber("kDriveFF", Drive.kFF));
+            module.setTurnPIDCoeffs(
+                SmartDashboard.getNumber("kTurnP", Turn.kP),
+                SmartDashboard.getNumber("kTurnI", Turn.kI),
+                SmartDashboard.getNumber("kTurnD", Turn.kD));
 
-        SmartDashboard.putNumber("frontLeftAngleDeg", this.modules.get(0).getPosition().angle.getDegrees());
-        SmartDashboard.putNumber("frontRightAngleDeg", this.modules.get(1).getPosition().angle.getDegrees());
-        SmartDashboard.putNumber("backLeftAngleDeg", this.modules.get(2).getPosition().angle.getDegrees());
-        SmartDashboard.putNumber("backRightAngleDeg", this.modules.get(3).getPosition().angle.getDegrees());
-
-        updateModulePIDFs(
-            SmartDashboard.getNumber("kDriveP", Drive.kP),
-            SmartDashboard.getNumber("kDriveI", Drive.kI),
-            SmartDashboard.getNumber("kDriveD", Drive.kD),
-            SmartDashboard.getNumber("kDriveFF", Drive.kFF),
-            SmartDashboard.getNumber("kTurnP", Turn.kP),
-            SmartDashboard.getNumber("kTurnI", Turn.kI),
-            SmartDashboard.getNumber("kTurnD", Turn.kD),
-            SmartDashboard.getNumber("kTurnFF", Turn.kFF)
-        );
-
-        modules.forEach(SwerveModule::update);
+            module.updateTurnOutput();
+            SmartDashboard.putNumber(module.id + " speedMetersPerSecond", module.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber(module.id + " angleDeg", module.getState().angle.getDegrees());
+        });
     }
 
     public CommandBase drive(DoubleSupplier throttle, DoubleSupplier strafe, DoubleSupplier turn,
@@ -94,8 +87,13 @@ public class Swerve extends SubsystemBase {
         ));
     }
 
+    public void setModuleStates(SwerveModuleState state) {
+        setModuleStates(
+            Collections.nCopies(modules.size() + 1, state)
+                       .toArray(new SwerveModuleState[modules.size() + 1]));
+    }
+
     public void setModuleStates(SwerveModuleState[] states) {
-        for(int i = 0;i<4;i++) SmartDashboard.putNumber("pod " + i + " desired speed", states[i].speedMetersPerSecond);
         for (int i = 0; i < modules.size(); i++) modules.get(i).setDesiredState(states[i]);
     }
 
@@ -113,31 +111,22 @@ public class Swerve extends SubsystemBase {
     }
 
     private void drive(double throttle, double strafe, double turn,
-                       boolean fieldCentric, double periodSeconds) {
-        setModuleStates(
-            statesFromChassisSpeeds(
-                chassisSpeedsFromInputs(
-                    throttle,
-                    strafe,
-                    turn,
-                    fieldCentric,
-                    periodSeconds)));
-    }
-
-    private ChassisSpeeds chassisSpeedsFromInputs(double throttle, double strafe, double turn,
-                                                boolean fieldRelative, double periodSeconds) {
-        return // ChassisSpeedsUtil.discretize(
+                       boolean fieldRelative, double periodSeconds) {
+        final var speeds = 
             fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
                 throttle, strafe, turn, gyro.getRotation2d())
             : new ChassisSpeeds(throttle, strafe, gyro.getRate());
-            // periodSeconds);
+
+        drive(speeds);
     }
 
-    private SwerveModuleState[] statesFromChassisSpeeds(ChassisSpeeds speeds) {
+    public void drive(ChassisSpeeds speeds) {
         final var states = kSwerveKinematics.toSwerveModuleStates(speeds);
+
         SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);
-        return states;
+
+        setModuleStates(states);
     }
 
     private SwerveModulePosition[] getModulePositions() {
@@ -147,7 +136,7 @@ public class Swerve extends SubsystemBase {
             .toArray(SwerveModulePosition[]::new);
     }
 
-    private void initModulePID() {
+    private void initModulePIDF() {
         SmartDashboard.putNumber("kDriveP", Drive.kP);
         SmartDashboard.putNumber("kDriveI", Drive.kI);
         SmartDashboard.putNumber("kDriveD", Drive.kD);
@@ -157,15 +146,13 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("kTurnI", Turn.kI);
         SmartDashboard.putNumber("kTurnD", Turn.kD);
         SmartDashboard.putNumber("kTurnFF", Turn.kFF);
-
-        updateModulePIDFs(Drive.kP, Drive.kI, Drive.kD, Drive.kFF, Turn.kP, Turn.kI, Turn.kD, Turn.kFF);
     }
 
     private void updateModulePIDFs(double driveP, double driveI, double driveD, double driveFF,
-                                   double turnP, double turnI, double turnD, double turnFF) {
+                                   double turnP, double turnI, double turnD) {
         this.modules.forEach(module -> {
             module.setDrivePIDFCoeffs(driveP, driveI, driveD, driveFF);
-            module.setTurnPIDFCoeffs(turnP, turnI, turnD, turnFF);
+            module.setTurnPIDCoeffs(turnP, turnI, turnD);
         });
     }
 }

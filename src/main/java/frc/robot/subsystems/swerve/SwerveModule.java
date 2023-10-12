@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static frc.robot.Constants.Swerve.*;
 
 public class SwerveModule {
+    public final String id;
+
     private final CANSparkMax driveMotor;
     private final CANSparkMax turnMotor;
 
@@ -26,6 +28,8 @@ public class SwerveModule {
     private final PIDController turnController;
 
     public SwerveModule(ModuleConfig config) {
+        this.id = config.id;
+
         this.driveMotor = new CANSparkMax(config.kDriveId, MotorType.kBrushless);
         this.turnMotor = new CANSparkMax(config.kTurnId, MotorType.kBrushless);
 
@@ -40,23 +44,27 @@ public class SwerveModule {
         configControllers();
     }
 
-    public void update() {
-        var output = turnController.calculate(turnEncoder.getAbsolutePosition());
+    public void updateTurnOutput() {
+        final var output = turnController.calculate(turnEncoder.getAbsolutePosition());
             
-        SmartDashboard.putNumber("output", output);
-        SmartDashboard.putNumber("setpoint", turnController.getSetpoint());
+        SmartDashboard.putNumber(id + " output", output);
+        SmartDashboard.putNumber(id + " setpoint", turnController.getSetpoint());
+        
+        SmartDashboard.putNumber(id + " currAngleDeg", Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()).getDegrees());
 
-        turnMotor.set(MathUtil.clamp(output, -0.7, 0.7));
+        turnMotor.set(MathUtil.clamp(output, -1.0, 1.0));
     }
 
     public void setDesiredState(SwerveModuleState state) {
-        var optimizedState = SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
+        final var optimizedState = SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
+
+        SmartDashboard.putNumber(id + " targetVeloSetpointMetersPerSecond", optimizedState.speedMetersPerSecond);
+        SmartDashboard.putNumber(id + " currVeloMetersPerSecond", getState().speedMetersPerSecond);
 
         driveController.setReference(optimizedState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
         turnController.setSetpoint(optimizedState.angle.getRadians());
 
-        SmartDashboard.putNumber("targetAngleDeg", optimizedState.angle.getDegrees());
-        SmartDashboard.putNumber("currAngleDeg", Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()).getDegrees());
+        SmartDashboard.putNumber(id + " targetAngleDeg", optimizedState.angle.getDegrees());
     }
 
     public void setDrivePIDFCoeffs(double p, double i, double d, double f) {
@@ -65,7 +73,8 @@ public class SwerveModule {
         this.driveController.setD(d);
         this.driveController.setFF(f);
     }
-    public void setTurnPIDFCoeffs(double p, double i, double d, double f) {
+
+    public void setTurnPIDCoeffs(double p, double i, double d) {
         this.turnController.setPID(p, i, d);
     }
 
@@ -101,7 +110,7 @@ public class SwerveModule {
     }
 
     private void configEncoders(double magOffsetDeg) {
-        var config = kCANCoderConfig;
+        final var config = kCANCoderConfig;
         config.magnetOffsetDegrees = magOffsetDeg;
 
         turnEncoder.configAllSettings(config);
@@ -111,8 +120,6 @@ public class SwerveModule {
 
     private void configControllers() {
         setDrivePIDFCoeffs(Drive.kP, Drive.kI, Drive.kD, Drive.kFF);
-        setTurnPIDFCoeffs(Turn.kP, Turn.kI, Turn.kD, Turn.kFF);
-
         turnController.enableContinuousInput(-Math.PI, Math.PI);
     }
 }
