@@ -16,8 +16,8 @@ public class MoveToSetpoint extends CommandBase {
   public MoveToSetpoint(Arm arm, ArmSetpoints setpoint) {
     this.arm = arm;
 
-    this.anchorPosSetpoint = setpoint.anchor;
-    this.floatingPosSetpoint = setpoint.floating;
+    this.anchorPosSetpoint = setpoint.getAnchor();
+    this.floatingPosSetpoint = setpoint.getFloating();
   }
 
   @Override
