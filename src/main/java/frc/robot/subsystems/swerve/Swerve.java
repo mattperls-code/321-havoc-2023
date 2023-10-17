@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.ChassisSpeedsUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +51,7 @@ public class Swerve extends SubsystemBase {
 		initModulePIDF();
 
 		gyro.zeroYaw();
-		gyro.setAngleAdjustment(90);
+		// gyro.setAngleAdjustment(90);
 	}
 
 	@Override
@@ -91,26 +92,12 @@ public class Swerve extends SubsystemBase {
 			strafe.getAsDouble(),
 			turn.getAsDouble(),
 			fieldCentric, periodSeconds));
-		// use if swerve kinematics doesn't handle it
-		// Commands.either(run(() -> drive(
-		// 	throttle.getAsDouble(),
-		// 	strafe.getAsDouble(),
-		// 	turn.getAsDouble(),
-		// 	fieldCentric, periodSeconds)),
-		// 	runOnce(() -> setModuleStates(
-		// 	Arrays.stream(getModulePositions())
-		// 		.map(p -> new SwerveModuleState(0, p.angle))
-		// 		.toArray(SwerveModuleState[]::new))), 
-		// 	() ->
-		// 		MathUtil.applyDeadband(throttle.getAsDouble(), kJoystickDeadband) == 0.0 &&
-		// 		MathUtil.applyDeadband(strafe.getAsDouble(), kJoystickDeadband) == 0.0 &&
-		// 		MathUtil.applyDeadband(turn.getAsDouble(), kJoystickDeadband) == 0.0);
 	}
 
 	public void setModuleStates(SwerveModuleState state) {
 		setModuleStates(
-				Collections.nCopies(modules.size() + 1, state)
-						.toArray(new SwerveModuleState[modules.size() + 1]));
+				Collections.nCopies(modules.size(), state)
+						.toArray(new SwerveModuleState[modules.size()]));
 	}
 
 	public void setModuleStates(SwerveModuleState[] states) {
@@ -128,20 +115,16 @@ public class Swerve extends SubsystemBase {
 
 	public void drive(
 			double throttle, double strafe, double turn, boolean fieldRelative, double periodSeconds) {
-		final var speeds = fieldRelative
+		final var speeds = // ChassisSpeedsUtil.discretize(
+			fieldRelative
 				? ChassisSpeeds.fromFieldRelativeSpeeds(throttle, strafe, turn, gyro.getRotation2d())
 				: new ChassisSpeeds(throttle, strafe, turn);
+				// , periodSeconds);
 
 		drive(speeds);
 	}
 
 	public void drive(ChassisSpeeds speeds) {
-		SmartDashboard.putBoolean("commanded ChassisSpeeds is [0, 0, 0] (modules should idle)",
-			speeds.vxMetersPerSecond == 0.0 &&
-			speeds.vyMetersPerSecond == 0.0 &&
-			speeds.omegaRadiansPerSecond == 0.0
-		);
-		
 		final var states = kSwerveKinematics.toSwerveModuleStates(speeds);
 
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeedMetersPerSecond);

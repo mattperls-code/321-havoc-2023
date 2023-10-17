@@ -58,8 +58,8 @@ public class SwerveModule {
   }
 
   public void setDesiredState(SwerveModuleState state) {
-    final var optimizedState = state;
-        // SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
+    final var optimizedState =
+        SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
 
     SmartDashboard.putNumber(
         id + " targetVeloSetpointMetersPerSecond", optimizedState.speedMetersPerSecond);

@@ -148,8 +148,8 @@ public final class Constants {
     public static final double kWheelRadiusMeters = Units.inchesToMeters(1.5);
     public static final double kGearRatio = 6.8;
 
-    public static final double kMaxSpeedMetersPerSecond = 1.5;
-    public static final double kMaxOmegaRadiansPerSecond = Math.PI / 2.0;
+    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxOmegaRadiansPerSecond = 1.5 * Math.PI;
 
     public static final double kRPMToMetersPerSecond =
         2 * Math.PI * kWheelRadiusMeters / (kGearRatio * 60.0);
