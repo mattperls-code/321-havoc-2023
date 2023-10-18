@@ -18,6 +18,12 @@ import org.robolancers321.subsystems.swerve.Swerve;
 import org.robolancers321.subsystems.swerve.SwerveModule;
 
 public class RobotContainer {
+  private final Arm arm = new Arm();
+
+  private final CommandXboxController driverController =
+      new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
+
+  private final CommandXboxController manipulatorController =
   private final Field2d field = new Field2d();
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
