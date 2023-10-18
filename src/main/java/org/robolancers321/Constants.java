@@ -29,11 +29,11 @@ public final class Constants {
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kNominalVoltage = 12.0;
       public static final boolean kEnableSoftLimit = false;
-      public static final double kMaxOutput = 0.5; // going up
-      public static final double kMinOutput = -0.4; // going down
-      public static final int kCurrentLimit = 50; // 40 to 60
-
+      public static final double kMaxOutput = 1; // going up
+      public static final double kMinOutput = -1; // going down
+      public static final int kCurrentLimit = 40; // 40 or 50 for best performance
       public static final double kTolerance = 2.0; // error within 2 degrees
 
       public static final class PID {
@@ -45,11 +45,11 @@ public final class Constants {
 
       public static final class FF {
         // change to final when done tuning
-        public static double kS = 0;
-        public static double kG = 0; // gravity FF most likely only tune this gain
+        public static final double kS = 0;
+        public static double kG = 0;
         public static final double kV = 0;
         public static final double kA = 0;
-        public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
+        public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
       }
 
       public static final class MP {
@@ -62,18 +62,13 @@ public final class Constants {
       public static final class Conversions {
         /*
         velocity - motorRot/s
-        motorRot/s * mechRot/motorRot * meters/mechRot = meters/s
-        */
+        motorRot/s * deg/motorRot = deg/s
 
-        public static final double kGearRatio = 64; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kGearRadius = 0; // m
-        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
-
-        /*
         Position - motorRot
-        motorRot * mechRot/motorRot * deg/mechRot = deg
+        motorRot * mechRot/motorRot (gearRatio) * deg/mechRot = deg
          */
 
+        public static final double kGearRatio = 64; //  TODO check if this is correct
         public static final double kDegPerRot = kGearRatio * 360;
       }
     }
@@ -85,13 +80,13 @@ public final class Constants {
       public static final boolean kInverted = false;
       public static final double kFloatingLength = 0;
       public static final double kZeroPosition = 0;
+      public static final double kNominalVoltage = 12.0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
       public static final boolean kEnableSoftLimit = false;
-      public static final double kMaxOutput = 0.5; // going up
-      public static final double kMinOutput = -0.5; // going down
-      public static final int kCurrentLimit = 50; // 40 to 60
-
+      public static final double kMaxOutput = 1; // going up
+      public static final double kMinOutput = -1; // going down
+      public static final int kCurrentLimit = 40;
       public static final double kTolerance = 2.0; // error within 2 degrees
 
       public static final class PID {
@@ -102,9 +97,8 @@ public final class Constants {
       }
 
       public static final class FF {
-        // change to final when done tuning
-        public static double kS = 0;
-        public static double kG = 0; // gravity FF most likely only tune this gain
+        public static final double kS = 0;
+        public static final double kG = 0;
         public static final double kV = 0;
         public static final double kA = 0;
         public static final ArmFeedforward FLOATING_FEEDFORWARD =
@@ -120,23 +114,37 @@ public final class Constants {
 
       public static final class Conversions {
         public static final double kGearRatio = 25; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kGearRadius = 0; // m
-        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
         public static final double kDegPerRot = kGearRatio * 360;
       }
     }
 
     public enum ArmSetpoints {
+      /* Priority of setpoints
+      1. HIGH
+      2. CONTRACT honestly just give it zero positions no need to tune
+      3. SHELF
+      4. MID
+      5. GROUND idk if the robot can even mechanically do this efficiently
+       */
+
       TEST(0, 0);
 
-      public double anchor;
-      public double floating;
+      private double anchor;
+      private double floating;
 
       ArmSetpoints(double y, double z) {
         InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
 
         this.anchor = angles.anchor;
         this.floating = angles.floating;
+      }
+
+      public double getAnchor() {
+        return this.anchor;
+      }
+
+      public double getFloating() {
+        return this.floating;
       }
     }
   }
