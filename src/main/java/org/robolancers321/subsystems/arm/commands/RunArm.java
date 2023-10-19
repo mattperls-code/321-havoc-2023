@@ -21,9 +21,9 @@ public class RunArm extends CommandBase {
             Math.toRadians(arm.getAnchorSetpoint()), 0);
     arm.setAnchorControllerReference(arm.getAnchorSetpoint(), anchorFF);
 
-    double floatingFF =
-        Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
-            Math.toRadians(arm.getFloatingSetpoint()), 0);
-    arm.setFloatingControllerReference(arm.getFloatingSetpoint(), floatingFF);
+    // double floatingFF =
+    //     Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
+    //         Math.toRadians(arm.getFloatingSetpoint()), 0);
+    arm.setFloatingControllerReference(arm.getFloatingSetpoint(), 0);
   }
 }

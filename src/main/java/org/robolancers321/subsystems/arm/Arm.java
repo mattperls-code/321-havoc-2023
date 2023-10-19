@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase implements AutoCloseable {
     configureEncoders();
     configureControllers();
 
-    // initTuneControllers();
+    initTuneControllers();
   }
 
   private void configureMotors() {
@@ -207,7 +207,7 @@ public class Arm extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void periodic() {
-    // tuneControllers();
+    tuneControllers();
   }
 
   @Override

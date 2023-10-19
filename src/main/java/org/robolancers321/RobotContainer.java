@@ -9,21 +9,19 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
+import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
+import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
+import org.robolancers321.subsystems.arm.commands.MoveToSetpoint;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.swerve.Swerve;
 import org.robolancers321.subsystems.swerve.SwerveModule;
 
 public class RobotContainer {
-  private final Arm arm = new Arm();
-
-  private final CommandXboxController driverController =
-      new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
-
-  private final CommandXboxController manipulatorController =
   private final Field2d field = new Field2d();
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
@@ -50,7 +48,27 @@ public class RobotContainer {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    // driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
+    // driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
+    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+
+    // driver.a().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.SHELF, isCubeMode));
+    // driver.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
+    // driver.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
+
+    // driverController.start().onTrue(new InstantCommand(() -> {
+    //   if(isCubeMode == false){
+    //     isCubeMode = true;
+    //   } else {
+    //     isCubeMode = false;
+    //   }
+    //SmartDashboard.putBoolean("isCubeMode", isCubeMode);
+
+    };
+
+  
 
   public Command getAutonomousCommand() {
     return autoPicker.getAutoChooser().getSelected();
