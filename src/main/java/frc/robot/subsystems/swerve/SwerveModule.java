@@ -39,7 +39,7 @@ public class SwerveModule {
     this.driveController = driveMotor.getPIDController();
     this.turnController = new PIDController(Turn.kP, Turn.kI, Turn.kD);
 
-    configMotors(config.driveIsInverted);
+    configMotors(config.driveIsInverted, config.turnIsInverted);
     configEncoders(config.magOffsetDeg);
     configControllers();
   }
@@ -60,6 +60,8 @@ public class SwerveModule {
   public void setDesiredState(SwerveModuleState state) {
     final var optimizedState =
         SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
+
+    // optimizedState.speedMetersPerSecond *= state.angle.minus(getState().angle).getCos();
 
     SmartDashboard.putNumber(
         id + " targetVeloSetpointMetersPerSecond", optimizedState.speedMetersPerSecond);
@@ -93,9 +95,9 @@ public class SwerveModule {
         driveEncoder.getVelocity() * kRPMToMetersPerSecond, Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()));
   }
 
-  private void configMotors(boolean driveIsInverted) {
+  private void configMotors(boolean driveIsInverted, boolean turnIsInverted) {
     driveMotor.setInverted(driveIsInverted);
-    turnMotor.setInverted(false);
+    turnMotor.setInverted(turnIsInverted);
 
     driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     turnMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);

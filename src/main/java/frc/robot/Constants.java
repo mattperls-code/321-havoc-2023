@@ -107,6 +107,7 @@ public final class Constants {
       public final int kTurnEncoderId;
       public final double magOffsetDeg;
       public final boolean driveIsInverted;
+      public final boolean turnIsInverted;
 
       public ModuleConfig(
           final String idString,
@@ -114,29 +115,31 @@ public final class Constants {
           final int turnId,
           final int turnEncoderId,
           final double magOffsetDeg,
-          final boolean driveIsInverted) {
+          final boolean driveIsInverted,
+          final boolean turnIsInverted) {
         this.id = idString;
         this.kDriveId = driveId;
         this.kTurnId = turnId;
         this.kTurnEncoderId = turnEncoderId;
         this.magOffsetDeg = magOffsetDeg;
         this.driveIsInverted = driveIsInverted;
+        this.turnIsInverted = turnIsInverted;
       }
     }
 
     public static final ModuleConfig frontLeft =
-        new ModuleConfig("FrontLeft", 2, 9, 10, -38.67179683527642, true);
+        new ModuleConfig("FrontLeft", 19, 18, 3, 58.87907200420464, true, false);
     public static final ModuleConfig frontRight =
-        new ModuleConfig("FrontRight", 4, 3, 11, -69.08189161938014, true);
+        new ModuleConfig("FrontRight", 11, 10, 1, -128.44749934250595, true, false);
     public static final ModuleConfig backLeft =
-        new ModuleConfig("BackLeft", 7, 8, 13, -8.261702051172689, true);
+        new ModuleConfig("BackLeft", 3, 2, 2, 107.41925934100429, true, true);
     public static final ModuleConfig backRight =
-        new ModuleConfig("BackRight", 6, 5, 12, -170.59535831198076, false);
+        new ModuleConfig("BackRight", 5, 6, 4, -142.90441434353835, true, false);
 
     public static final CANCoderConfiguration kCANCoderConfig = new CANCoderConfiguration();
 
     static {
-      kCANCoderConfig.sensorCoefficient = 2 * Math.PI / 4096.0;
+      kCANCoderConfig.sensorCoefficient = 7.0 * (180.0) / ((2526.0 + 2967.0) * 150.0);
       kCANCoderConfig.unitString = "rad";
       kCANCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
       kCANCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
