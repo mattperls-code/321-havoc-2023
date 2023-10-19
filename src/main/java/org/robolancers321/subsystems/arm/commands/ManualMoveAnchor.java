@@ -7,7 +7,7 @@ import org.robolancers321.subsystems.arm.Arm;
 public class ManualMoveAnchor extends CommandBase {
   private Arm arm;
 
-  private double speed = 0.2;
+  private double speed = 0.1;
   private boolean reverse;
 
   public ManualMoveAnchor(Arm arm, boolean reverse) {

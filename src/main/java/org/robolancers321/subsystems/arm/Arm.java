@@ -44,7 +44,7 @@ public class Arm extends SubsystemBase {
     configureEncoders();
     configureControllers();
 
-    // initTuneControllers();
+    initTuneControllers();
   }
 
   private void configureMotors() {
@@ -207,6 +207,6 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // tuneControllers();
+    tuneControllers();
   }
 }
