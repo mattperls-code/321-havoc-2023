@@ -44,17 +44,27 @@ public class RobotContainer {
     driverController.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
     driverController.rightTrigger().whileTrue(new ManualMoveAnchor(arm, true));
 
-    driverController.a().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.SHELF, isCubeMode));
-    driverController.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
-    driverController.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
+    driverController
+        .a()
+        .onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.SHELF, isCubeMode));
+    driverController
+        .x()
+        .onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
+    driverController
+        .y()
+        .onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
 
-    driverController.start().onTrue(new InstantCommand(() -> {
-      if(isCubeMode == false){
-        isCubeMode = true;
-      } else {
-        isCubeMode = false;
-      }
-    }));
+    driverController
+        .start()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  if (isCubeMode == false) {
+                    isCubeMode = true;
+                  } else {
+                    isCubeMode = false;
+                  }
+                }));
 
     SmartDashboard.putBoolean("isCubeMode", isCubeMode);
   }

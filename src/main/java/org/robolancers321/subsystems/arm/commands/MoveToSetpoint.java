@@ -12,16 +12,16 @@ public class MoveToSetpoint extends CommandBase {
 
   private double anchorSetpoint;
   private double floatingSetpoint;
-  private double cubeOffset = 0; 
+  private double cubeOffset = 0;
 
   public MoveToSetpoint(Arm arm, ArmSetpoints setpoint, boolean isCubeMode) {
     this.arm = arm;
 
     this.anchorSetpoint = setpoint.getAnchor();
 
-    if(isCubeMode){
+    if (isCubeMode) {
       this.floatingSetpoint = setpoint.getFloating() + this.cubeOffset;
-    } else{
+    } else {
       this.floatingSetpoint = setpoint.getFloating();
     }
   }

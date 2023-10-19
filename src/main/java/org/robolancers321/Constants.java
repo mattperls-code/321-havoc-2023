@@ -25,7 +25,7 @@ public final class Constants {
       public static final int kAnchorPort = 15;
 
       public static final boolean kInverted = false;
-      public static final double kAnchorLength = 33; //in
+      public static final double kAnchorLength = 33; // in
       public static final double kZeroPosition = 0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
@@ -33,7 +33,7 @@ public final class Constants {
       public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 1; // going up
       public static final double kMinOutput = -1; // going down
-      public static final int kCurrentLimit = 60; // 
+      public static final int kCurrentLimit = 60; //
       public static final double kTolerance = 2.0; // error within 2 degrees
 
       public static final class PID {
@@ -77,7 +77,7 @@ public final class Constants {
       public static final int kFloatingPort = 16;
 
       public static final boolean kInverted = false;
-      public static final double kFloatingLength = 36; //in
+      public static final double kFloatingLength = 36; // in
       public static final double kZeroPosition = 0;
       public static final double kNominalVoltage = 12.0;
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
@@ -121,16 +121,16 @@ public final class Constants {
       /* From game manual, y is from carpet, z is from front of grid
       SHELF - 37.375 in high + 13 in from cone = 50.375
       MID - 34 in high, 22.75 in
-      HIGH - 46 in high, 39.75 in 
+      HIGH - 46 in high, 39.75 in
        */
 
-      SHELF(50.375, 0), //determine z by moving the arm, so floating is parallel
+      SHELF(50.375, 0), // determine z by moving the arm, so floating is parallel
       MID(34, 22.75),
       HIGH(46, 39.75);
 
       private double anchor;
       private double floating;
-      private double yOffset = 0; //from the ground
+      private double yOffset = 0; // from the ground
 
       ArmSetpoints(double y, double z) {
         InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
