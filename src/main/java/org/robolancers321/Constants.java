@@ -97,11 +97,16 @@ public final class Constants {
 
         Position - motorRot
         motorRot * mechRot/motorRot (gearRatio) * deg/mechRot = deg
+
+        (endAngle - startAngle) / valueAtEndAngle)
          */
 
-        public static final double kGearRatio = 64; //  TODO check if this is correct
-        public static final double kDegPerRot = kGearRatio * 360;
+        public static final double kGearRatio = 64;
+        public static final double kDegPerRot = (90.0 - (180.0 - 145.0)) / (8.333358764648438);
       }
+      
+      // 145deg -> -161.52581787109375
+      // 90deg -> -108.32477569580078
     }
 
     public static class Floating {
@@ -270,9 +275,12 @@ public final class Constants {
       HIGH - 46 in high, 39.75 in
        */
 
-      SHELF(50.375, 0), // determine z by moving the arm, so floating is parallel
-      MID(34, 22.75),
-      HIGH(46, 39.75);
+      // SHELF(50.375, 0), 
+      // MID(34, 22.75),
+      // HIGH(46, 39.75),
+      // TEST(0, 0);
+
+      TEST(0, 0);
 
       private double anchor;
       private double floating;

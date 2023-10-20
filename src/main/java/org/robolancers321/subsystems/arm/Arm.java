@@ -1,12 +1,14 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321.subsystems.arm;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
@@ -27,17 +29,17 @@ public class Arm extends SubsystemBase implements AutoCloseable {
   private final SparkMaxPIDController floatingPIDController;
 
   // TODO: potentially should use explicit getters and setters
-  private double anchorSetpoint = Constants.Arm.Anchor.kZeroPosition;
-  private double floatingSetpoint = Constants.Arm.Floating.kZeroPosition;
+  private double anchorSetpoint;
+  private double floatingSetpoint;
 
   public Arm() {
     this.anchorMotor = new CANSparkMax(Constants.Arm.Anchor.kAnchorPort, MotorType.kBrushless);
-    this.anchorEncoder = anchorMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.anchorEncoder = anchorMotor.getEncoder();
     this.anchorPIDController = this.anchorMotor.getPIDController();
 
     this.floatingMotor =
         new CANSparkMax(Constants.Arm.Floating.kFloatingPort, MotorType.kBrushless);
-    this.floatingEncoder = floatingMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    this.floatingEncoder = floatingMotor.getEncoder();
     this.floatingPIDController = this.floatingMotor.getPIDController();
 
     configureMotors();
@@ -48,7 +50,7 @@ public class Arm extends SubsystemBase implements AutoCloseable {
   }
 
   private void configureMotors() {
-    anchorMotor.setInverted(Constants.Arm.Anchor.kInverted);
+    anchorMotor.setInverted(Constants.Arm.Anchor.kMotorInverted);
     anchorMotor.setIdleMode(IdleMode.kBrake);
     anchorMotor.setSmartCurrentLimit(Constants.Arm.Anchor.kCurrentLimit);
     anchorMotor.enableVoltageCompensation(Constants.Arm.Anchor.kNominalVoltage);
@@ -57,7 +59,14 @@ public class Arm extends SubsystemBase implements AutoCloseable {
     anchorMotor.enableSoftLimit(SoftLimitDirection.kReverse, Constants.Arm.Anchor.kEnableSoftLimit);
     anchorMotor.enableSoftLimit(SoftLimitDirection.kForward, Constants.Arm.Anchor.kEnableSoftLimit);
 
-    floatingMotor.setInverted(Constants.Arm.Floating.kInverted);
+    // //limit feedback rate of useless info, give abs encoder feedback at 20 m/s. 65535 m/s is the max
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535); //analog sensor
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535); //alternate encoder
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535); //absolute encoder position
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
+
+
+    floatingMotor.setInverted(Constants.Arm.Floating.kMotorInverted);
     floatingMotor.setIdleMode(IdleMode.kBrake);
     floatingMotor.setSmartCurrentLimit(Constants.Arm.Floating.kCurrentLimit);
     floatingMotor.enableVoltageCompensation(Constants.Arm.Floating.kNominalVoltage);
@@ -69,14 +78,20 @@ public class Arm extends SubsystemBase implements AutoCloseable {
         SoftLimitDirection.kReverse, Constants.Arm.Floating.kEnableSoftLimit);
     floatingMotor.enableSoftLimit(
         SoftLimitDirection.kForward, Constants.Arm.Floating.kEnableSoftLimit);
+  
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
+
   }
 
   private void configureEncoders() {
     anchorEncoder.setPositionConversionFactor(Constants.Arm.Anchor.Conversions.kDegPerRot);
-    anchorEncoder.setZeroOffset(Constants.Arm.Anchor.kZeroPosition);
+    anchorEncoder.setPosition(Constants.Arm.Anchor.kZeroOffset);
 
     floatingEncoder.setPositionConversionFactor(Constants.Arm.Floating.Conversions.kDegPerRot);
-    floatingEncoder.setZeroOffset(Constants.Arm.Floating.kZeroPosition);
+    floatingEncoder.setPosition(Constants.Arm.Floating.kZeroOffset);
   }
 
   private void configureControllers() {
@@ -98,6 +113,7 @@ public class Arm extends SubsystemBase implements AutoCloseable {
   }
 
   public double getFloatingAngle() {
+    // return ((-floatingEncoder.getPosition() - getAnchorAngle()) % 360.0) + 360.0;
     return floatingEncoder.getPosition();
   }
 
@@ -199,6 +215,7 @@ public class Arm extends SubsystemBase implements AutoCloseable {
 
     SmartDashboard.putNumber("anchorAngle", getAnchorAngle());
     SmartDashboard.putNumber("floatingAngle", getFloatingAngle());
+
     SmartDashboard.putNumber("anchorOutput", this.anchorMotor.getAppliedOutput());
     SmartDashboard.putNumber("floatingOutput", this.floatingMotor.getAppliedOutput());
     SmartDashboard.putNumber("anchorBusVoltage", this.anchorMotor.getBusVoltage());
