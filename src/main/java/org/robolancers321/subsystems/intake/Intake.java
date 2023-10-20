@@ -1,5 +1,5 @@
 /* (C) Robolancers 2024 */
-package org.robolancers321.intake;
+package org.robolancers321.subsystems.intake;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import frc.robot.Constants;
+import org.robolancers321.Constants;
 
 public class Intake extends SubsystemBase {
   public CANSparkMax intakeMotor;

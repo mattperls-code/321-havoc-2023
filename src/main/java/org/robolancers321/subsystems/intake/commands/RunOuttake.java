@@ -1,5 +1,5 @@
 /* (C) Robolancers 2024 */
-package org.robolancers321.intake.commands;
+package org.robolancers321.subsystems.intake.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
