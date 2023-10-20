@@ -1,31 +1,27 @@
-package frc.robot.commands;
+/* (C) Robolancers 2024 */
+package org.robolancers321.intake.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.IntakePID;
 import frc.robot.subsystems.Intake;
 
 public class RunIntake extends CommandBase {
-    public double velocity;
+  public double velocity;
 
-    Intake intake;
+  Intake intake;
 
-    public RunIntake(Intake intake, double velocity) {
-        this.intake = intake;
-        this.velocity = velocity;
-        addRequirements(intake);
-    }
+  public RunIntake(Intake intake, double velocity) {
+    this.intake = intake;
+    this.velocity = velocity;
+    addRequirements(intake);
+  }
 
-    @Override
-    public void initialize() {
-        intake.setIntakeVelocity(velocity);
-    }
-    
-    @Override
-    public void end(boolean interrupted) {
-        intake.setIntakeVelocity(0);
-    }
+  @Override
+  public void initialize() {
+    intake.setIntakeVelocity(velocity);
+  }
 
+  @Override
+  public void end(boolean interrupted) {
+    intake.setIntakeVelocity(0);
+  }
 }
-   
-

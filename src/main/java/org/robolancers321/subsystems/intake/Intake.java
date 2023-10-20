@@ -1,5 +1,5 @@
 /* (C) Robolancers 2024 */
-package org.robolancers321;
+package org.robolancers321.intake;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
