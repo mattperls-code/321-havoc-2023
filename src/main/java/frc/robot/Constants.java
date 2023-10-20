@@ -1,6 +1,8 @@
 /* (C) Robolancers 2024 */
 package frc.robot;
 
+import org.robolancers321.Robot;
+
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
