@@ -54,7 +54,7 @@ public class SwerveModule {
         id + " currAngleDeg",
         Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()).getDegrees());
 
-    turnMotor.set(MathUtil.clamp(output, -1.0, 1.0));
+    turnMotor.set(-MathUtil.clamp(output, -1.0, 1.0));
   }
 
   public void setDesiredState(SwerveModuleState state) {

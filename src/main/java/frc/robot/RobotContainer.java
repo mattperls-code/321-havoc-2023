@@ -35,14 +35,14 @@ public class RobotContainer {
           field);
 
   public RobotContainer() {
-    swerve.setDefaultCommand(swerve.run(() -> swerve.setModuleStates(new SwerveModuleState(0, new Rotation2d()))));
+    // swerve.setDefaultCommand(swerve.run(() -> swerve.setModuleStates(new SwerveModuleState(0, new Rotation2d()))));
 
-    // swerve.setDefaultCommand(
-    //   swerve.drive(
-    //     this::getThrottle,
-    //     this::getStrafe,
-    //     this::getTurn,
-    //     true, kGearRatio));
+    swerve.setDefaultCommand(
+      swerve.drive(
+        this::getThrottle,
+        this::getStrafe,
+        this::getTurn,
+        true, kGearRatio));
 
     // for tuning speed or angle controllers individually
     // swerve.setDefaultCommand(

@@ -91,7 +91,7 @@ public class Swerve extends SubsystemBase {
 		return run(() -> drive(
 			throttle.getAsDouble(),
 			strafe.getAsDouble(),
-			turn.getAsDouble(),
+			-turn.getAsDouble(),
 			fieldCentric, periodSeconds));
 	}
 

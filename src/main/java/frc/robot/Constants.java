@@ -132,7 +132,7 @@ public final class Constants {
     public static final ModuleConfig frontRight =
         new ModuleConfig("FrontRight", 11, 10, 1, -128.44749934250595, true, false);
     public static final ModuleConfig backLeft =
-        new ModuleConfig("BackLeft", 3, 2, 2, 107.41925934100429, true, true);
+        new ModuleConfig("BackLeft", 3, 2, 2, 107.41925934100429, true, false);
     public static final ModuleConfig backRight =
         new ModuleConfig("BackRight", 5, 6, 4, -142.90441434353835, true, false);
 
@@ -151,7 +151,7 @@ public final class Constants {
     public static final double kWheelRadiusMeters = Units.inchesToMeters(1.5);
     public static final double kGearRatio = 6.8;
 
-    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxSpeedMetersPerSecond = 4.0;
     public static final double kMaxOmegaRadiansPerSecond = 1.5 * Math.PI;
 
     public static final double kRPMToMetersPerSecond =
