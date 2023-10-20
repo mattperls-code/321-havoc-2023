@@ -2,7 +2,7 @@
 package org.robolancers321.subsystems.intake.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import org.robolancers321.subsystems.Intake;
 
 public class RunIntake extends CommandBase {
   public double velocity;
