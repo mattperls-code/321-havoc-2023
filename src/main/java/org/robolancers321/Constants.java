@@ -1,8 +1,6 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321;
 
-import org.robolancers321.Robot;
-
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
@@ -65,7 +63,7 @@ public final class Constants {
 
       public static final double kMaxOutput = Double.POSITIVE_INFINITY;
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
-      public static final double kAnchorLength = 33; //in
+      public static final double kAnchorLength = 33; // in
       public static final double kTolerance = 2.0;
 
       public static final class PID {
@@ -88,7 +86,7 @@ public final class Constants {
         public static final double maxVel = 2.0;
         public static final double maxAccel = 1.0;
         public static final TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
-                new TrapezoidProfile.Constraints(maxVel, maxAccel);
+            new TrapezoidProfile.Constraints(maxVel, maxAccel);
       }
 
       public static final class Conversions {
@@ -108,7 +106,6 @@ public final class Constants {
 
         public static final double kDegPerRot = kGearRatio * 360;
       }
-
     }
 
     public static class Floating {
@@ -142,8 +139,7 @@ public final class Constants {
       public static final double kMaxOutput = Double.POSITIVE_INFINITY;
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
       public static final double kFloatingLength = 36; // in
-      public static final double kTolerance = 2.0 ;
-
+      public static final double kTolerance = 2.0;
 
       public static final class PID {
         public static final double kP = 0;
@@ -159,14 +155,14 @@ public final class Constants {
         public static final double kV = 0;
         public static final double kA = 0;
         public static final ArmFeedforward FLOATING_FEEDFORWARD =
-                new ArmFeedforward(kS, kG, kV, kA);
+            new ArmFeedforward(kS, kG, kV, kA);
       }
 
       public static final class MP {
         public static final double maxVel = 1.0;
         public static final double maxAccel = 1.0;
         public static final TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
-                new TrapezoidProfile.Constraints(maxVel, maxAccel);
+            new TrapezoidProfile.Constraints(maxVel, maxAccel);
       }
 
       public static final class Conversions {
@@ -259,6 +255,21 @@ public final class Constants {
     }
   }
 
+  public enum RawArmSetpoints {
+    SHELF(0, 0),
+    MID(0, 0),
+    HIGH(0, 0);
+
+    public final double anchor;
+
+    public final double floating;
+
+    RawArmSetpoints(double anchor, double floating) {
+      this.anchor = anchor;
+      this.floating = floating;
+    }
+  }
+
   public enum ArmSetpoints {
     TEST(0, 0);
 
@@ -272,6 +283,4 @@ public final class Constants {
       this.floating = angles.floating;
     }
   }
-
-
 }

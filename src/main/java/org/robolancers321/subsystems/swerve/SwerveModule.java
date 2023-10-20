@@ -65,7 +65,8 @@ public class SwerveModule {
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        driveEncoder.getVelocity() * kRPMToMetersPerSecond, Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()));
+        driveEncoder.getVelocity() * kRPMToMetersPerSecond,
+        Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()));
   }
 
   private void configMotors(boolean driveIsInverted, boolean turnIsInverted) {

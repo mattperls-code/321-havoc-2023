@@ -1,29 +1,28 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321;
 
-import static org.robolancers321.Constants.Swerve.*;
 import static org.robolancers321.Constants.OperatorConstants.*;
+import static org.robolancers321.Constants.Swerve.*;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import org.robolancers321.Constants;
+import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.subsystems.arm.commands.RunArm;
+import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.swerve.Swerve;
 import org.robolancers321.subsystems.swerve.SwerveModule;
 
 public class RobotContainer {
   private final Field2d field = new Field2d();
-  private final CommandXboxController driver = new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driver =
+      new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final AHRS gyro = new AHRS(SPI.Port.kMXP);
   private final Arm arm = new Arm();
-
 
   private final Swerve swerve =
       new Swerve(
@@ -34,13 +33,11 @@ public class RobotContainer {
           gyro,
           field);
 
+  private final Intake intake = new Intake();
+  private final Autos autoPicker = new Autos(swerve, arm, intake);
+
   public RobotContainer() {
-    swerve.setDefaultCommand(
-      swerve.drive(
-        this::getThrottle,
-        this::getStrafe,
-        this::getTurn,
-        true));
+    swerve.setDefaultCommand(swerve.drive(this::getThrottle, this::getStrafe, this::getTurn, true));
 
     this.arm.setDefaultCommand(new RunArm(arm));
 
@@ -50,7 +47,7 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoPicker.getAutoChooser().getSelected();
   }
 
   private double getThrottle() {
@@ -62,6 +59,7 @@ public class RobotContainer {
   }
 
   private double getTurn() {
-    return kMaxOmegaRadiansPerSecond * MathUtil.applyDeadband(driver.getRightX(), kJoystickDeadband);
+    return kMaxOmegaRadiansPerSecond
+        * MathUtil.applyDeadband(driver.getRightX(), kJoystickDeadband);
   }
 }
