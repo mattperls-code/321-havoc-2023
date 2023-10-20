@@ -21,8 +21,6 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double kPeriodSeconds = Robot.kDefaultPeriod;
-
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kJoystickDeadband = 0.1;
@@ -141,7 +139,7 @@ public final class Constants {
     public static final CANCoderConfiguration kCANCoderConfig = new CANCoderConfiguration();
 
     static {
-      kCANCoderConfig.sensorCoefficient = 7.0 * (180.0) / ((2526.0 + 2967.0) * 150.0);
+      kCANCoderConfig.sensorCoefficient = (2.0 * Math.PI) / (4096.0);
       kCANCoderConfig.unitString = "rad";
       kCANCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
       kCANCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
@@ -167,7 +165,6 @@ public final class Constants {
             new Translation2d(-kTrackWidthMeters / 2, -kWheelBaseMeters / 2) // back right
             );
 
-    // TODO: tune coeffs.
     public static final class Drive {
       public static final double kP = 0.0;
       public static final double kI = 0.0;
