@@ -24,16 +24,17 @@ public final class Constants {
     public static final class Anchor {
       public static final int kAnchorPort = 15;
 
-      public static final boolean kInverted = false;
+      public static final boolean kEncoderInverted = false;
+      public static final boolean kMotorInverted = true;
       public static final double kAnchorLength = 33; // in
-      public static final double kZeroPosition = 0;
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kZeroOffset = 145;
+      public static final double kMinAngle = 0;
+      public static final double kMaxAngle = 0;
       public static final double kNominalVoltage = 12.0;
       public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 1; // going up
       public static final double kMinOutput = -1; // going down
-      public static final int kCurrentLimit = 60; //
+      public static final int kCurrentLimit = 50; //
       public static final double kTolerance = 2.0; // error within 2 degrees
 
       public static final class PID {
@@ -66,22 +67,28 @@ public final class Constants {
 
         Position - motorRot
         motorRot * mechRot/motorRot (gearRatio) * deg/mechRot = deg
+
+        (endAngle - startAngle) / valueAtEndAngle)
          */
 
-        public static final double kGearRatio = 64; //  TODO check if this is correct
-        public static final double kDegPerRot = kGearRatio * 360;
+        public static final double kGearRatio = 64;
+        public static final double kDegPerRot = (90.0 - (180.0 - 145.0)) / (8.333358764648438);
       }
+      
+      // 145deg -> -161.52581787109375
+      // 90deg -> -108.32477569580078
     }
 
     public static final class Floating {
       public static final int kFloatingPort = 16;
 
-      public static final boolean kInverted = false;
+      public static final boolean kEncoderInverted = false;
+      public static final boolean kMotorInverted = true;
       public static final double kFloatingLength = 36; // in
-      public static final double kZeroPosition = 0;
+      public static final double kZeroOffset = 0;
       public static final double kNominalVoltage = 12.0;
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kMinAngle = 0;
+      public static final double kMaxAngle = 0;
       public static final boolean kEnableSoftLimit = false;
       public static final double kMaxOutput = 1; // going up
       public static final double kMinOutput = -1; // going down
@@ -113,7 +120,7 @@ public final class Constants {
 
       public static final class Conversions {
         public static final double kGearRatio = 25; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kDegPerRot = kGearRatio * 360;
+        public static final double kDegPerRot = 1.0;
       }
     }
 
@@ -124,9 +131,12 @@ public final class Constants {
       HIGH - 46 in high, 39.75 in
        */
 
-      SHELF(50.375, 0), // determine z by moving the arm, so floating is parallel
-      MID(34, 22.75),
-      HIGH(46, 39.75);
+      // SHELF(50.375, 0), 
+      // MID(34, 22.75),
+      // HIGH(46, 39.75),
+      // TEST(0, 0);
+
+      TEST(0, 0);
 
       private double anchor;
       private double floating;
@@ -135,8 +145,8 @@ public final class Constants {
       ArmSetpoints(double y, double z) {
         InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
 
-        this.anchor = angles.anchor;
-        this.floating = angles.floating;
+        this.anchor = y;
+        this.floating = z;
       }
 
       public double getAnchor() {
