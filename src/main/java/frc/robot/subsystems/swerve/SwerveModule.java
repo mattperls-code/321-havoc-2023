@@ -13,7 +13,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
   public final String id;
@@ -47,13 +46,6 @@ public class SwerveModule {
   public void updateTurnOutput() {
     final var output = turnController.calculate(turnEncoder.getAbsolutePosition());
 
-    SmartDashboard.putNumber(id + " output", output);
-    SmartDashboard.putNumber(id + " setpoint", turnController.getSetpoint());
-
-    SmartDashboard.putNumber(
-        id + " currAngleDeg",
-        Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()).getDegrees());
-
     turnMotor.set(-MathUtil.clamp(output, -1.0, 1.0));
   }
 
@@ -61,28 +53,9 @@ public class SwerveModule {
     final var optimizedState =
         SwerveModuleState.optimize(state, new Rotation2d(turnEncoder.getAbsolutePosition()));
 
-    // optimizedState.speedMetersPerSecond *= state.angle.minus(getState().angle).getCos();
-
-    SmartDashboard.putNumber(
-        id + " targetVeloSetpointMetersPerSecond", optimizedState.speedMetersPerSecond);
-    SmartDashboard.putNumber(id + " currVeloMetersPerSecond", getState().speedMetersPerSecond);
-
     driveController.setReference(
         optimizedState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
     turnController.setSetpoint(optimizedState.angle.getRadians());
-
-    SmartDashboard.putNumber(id + " targetAngleDeg", optimizedState.angle.getDegrees());
-  }
-
-  public void setDrivePIDFCoeffs(double p, double i, double d, double f) {
-    this.driveController.setP(p);
-    this.driveController.setI(i);
-    this.driveController.setD(d);
-    this.driveController.setFF(f);
-  }
-
-  public void setTurnPIDCoeffs(double p, double i, double d) {
-    this.turnController.setPID(p, i, d);
   }
 
   public SwerveModulePosition getPosition() {
@@ -117,11 +90,16 @@ public class SwerveModule {
     config.magnetOffsetDegrees = magOffsetDeg;
 
     turnEncoder.configAllSettings(config);
-    // driveEncoder.setVelocityConversionFactor(kRPMToMetersPerSecond);
   }
 
   private void configControllers() {
-    setDrivePIDFCoeffs(Drive.kP, Drive.kI, Drive.kD, Drive.kFF);
-    turnController.enableContinuousInput(-Math.PI, Math.PI);
+    this.driveController.setP(Drive.kP);
+    this.driveController.setI(Drive.kI);
+    this.driveController.setD(Drive.kD);
+    this.driveController.setFF(Drive.kFF);
+
+    this.turnController.setPID(Turn.kP, Turn.kI, Turn.kD);
+
+    this.turnController.enableContinuousInput(-Math.PI, Math.PI);
   }
 }

@@ -46,13 +46,9 @@ public class Swerve extends SubsystemBase {
 		this.gyro = gyro;
 		this.field = field;
 
-		this.poseEstimator = new SwerveDrivePoseEstimator(
-				kSwerveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d());
-
-		initModulePIDF();
+		this.poseEstimator = new SwerveDrivePoseEstimator(kSwerveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d());
 
 		gyro.zeroYaw();
-		// gyro.setAngleAdjustment(90);
 	}
 
 	@Override
@@ -60,39 +56,19 @@ public class Swerve extends SubsystemBase {
 		this.field.setRobotPose(poseEstimator.update(gyro.getRotation2d(), getModulePositions()));
 		SmartDashboard.putData("Field", this.field);
 
-		SmartDashboard.putNumber("yaw", gyro.getRotation2d().getDegrees());
-
-		modules.forEach(
-			module -> {
-				SmartDashboard.putNumber(module.id + " drive motor position", module.getPosition().distanceMeters);
-				module.setDrivePIDFCoeffs(
-					SmartDashboard.getNumber("kDriveP", Drive.kP),
-					SmartDashboard.getNumber("kDriveI", Drive.kI),
-					SmartDashboard.getNumber("kDriveD", Drive.kD),
-					SmartDashboard.getNumber("kDriveFF", Drive.kFF));
-				module.setTurnPIDCoeffs(
-					SmartDashboard.getNumber("kTurnP", Turn.kP),
-					SmartDashboard.getNumber("kTurnI", Turn.kI),
-					SmartDashboard.getNumber("kTurnD", Turn.kD));
-
-				module.updateTurnOutput();
-				SmartDashboard.putNumber(
-						module.id + " speedMetersPerSecond", module.getState().speedMetersPerSecond);
-				SmartDashboard.putNumber(module.id + " angleDeg", module.getState().angle.getDegrees());
-			});
+		modules.forEach(module -> module.updateTurnOutput());
 	}
 
 	public CommandBase drive(
 		DoubleSupplier throttle,
 		DoubleSupplier strafe,
 		DoubleSupplier turn,
-		boolean fieldCentric,
-		double periodSeconds) {
+		boolean fieldCentric) {
 		return run(() -> drive(
 			throttle.getAsDouble(),
 			strafe.getAsDouble(),
 			-turn.getAsDouble(),
-			fieldCentric, periodSeconds));
+			fieldCentric));
 	}
 
 	public void setModuleStates(SwerveModuleState state) {
@@ -114,7 +90,7 @@ public class Swerve extends SubsystemBase {
 		this.poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), pose);
 	}
 
-	public void drive(double inputThrottle, double inputStrafe, double turn, boolean fieldRelative, double periodSeconds) {
+	public void drive(double inputThrottle, double inputStrafe, double turn, boolean fieldRelative) {
 		Translation2d correctedInput = CorrectiveTeleop.generateCorrectedInput(inputThrottle, inputStrafe, turn);
 
 		double throttle = correctedInput.getX();
@@ -138,17 +114,5 @@ public class Swerve extends SubsystemBase {
 
 	public SwerveModulePosition[] getModulePositions() {
 		return modules.stream().map(SwerveModule::getPosition).toArray(SwerveModulePosition[]::new);
-	}
-
-	private void initModulePIDF() {
-		SmartDashboard.putNumber("kDriveP", Drive.kP);
-		SmartDashboard.putNumber("kDriveI", Drive.kI);
-		SmartDashboard.putNumber("kDriveD", Drive.kD);
-		SmartDashboard.putNumber("kDriveFF", Drive.kFF);
-
-		SmartDashboard.putNumber("kTurnP", Turn.kP);
-		SmartDashboard.putNumber("kTurnI", Turn.kI);
-		SmartDashboard.putNumber("kTurnD", Turn.kD);
-		SmartDashboard.putNumber("kTurnFF", Turn.kFF);
 	}
 }
