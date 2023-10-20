@@ -165,7 +165,12 @@ public final class Constants {
             new Translation2d(-kTrackWidthMeters / 2, -kWheelBaseMeters / 2) // back right
             );
 
-    // TODO: tune coeffs.
+    public static final class Drift {
+      public static final double kP = 0.01;
+      public static final double kI = 0.00;
+      public static final double kD = 0.00;
+    }
+
     public static final class Drive {
       public static final double kP = 0.0;
       public static final double kI = 0.0;
@@ -177,7 +182,6 @@ public final class Constants {
       public static final double kP = 0.4;
       public static final double kI = 0.0;
       public static final double kD = 0.002;
-      public static final double kFF = 0.0;
     }
   }
 }
