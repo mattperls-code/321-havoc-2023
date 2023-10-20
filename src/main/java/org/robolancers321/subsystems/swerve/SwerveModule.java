@@ -1,7 +1,7 @@
 /* (C) Robolancers 2024 */
-package frc.robot.subsystems.swerve;
+package org.robolancers321.subsystems.swerve;
 
-import static frc.robot.Constants.Swerve.*;
+import static org.robolancers321.Constants.Swerve.*;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
@@ -65,7 +65,8 @@ public class SwerveModule {
 
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        driveEncoder.getVelocity() * kRPMToMetersPerSecond, Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()));
+        driveEncoder.getVelocity() * kRPMToMetersPerSecond,
+        Rotation2d.fromRadians(turnEncoder.getAbsolutePosition()));
   }
 
   private void configMotors(boolean driveIsInverted, boolean turnIsInverted) {
