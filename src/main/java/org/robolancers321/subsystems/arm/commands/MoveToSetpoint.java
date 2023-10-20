@@ -2,8 +2,6 @@
 package org.robolancers321.subsystems.arm.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.robolancers321.Constants;
-import org.robolancers321.Constants.Arm.ArmSetpoints;
 import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.util.MathUtils;
 

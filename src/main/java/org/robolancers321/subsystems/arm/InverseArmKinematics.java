@@ -1,8 +1,6 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321.subsystems.arm;
 
-import org.robolancers321.Constants;
-
 public class InverseArmKinematics {
   public static final class Output {
     public final double anchor;

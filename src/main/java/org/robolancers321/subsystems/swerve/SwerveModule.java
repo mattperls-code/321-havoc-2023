@@ -1,7 +1,7 @@
 /* (C) Robolancers 2024 */
-package frc.robot.subsystems.swerve;
+package org.robolancers321.subsystems.swerve;
 
-import static frc.robot.Constants.Swerve.*;
+import static org.robolancers321.Constants.Swerve.*;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
