@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import org.robolancers321.subsystems.arm.InverseArmKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -64,6 +65,8 @@ public final class Constants {
 
       public static final double kMaxOutput = Double.POSITIVE_INFINITY;
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
+      public static final double kAnchorLength = 33; //in
+      public static final double kTolerance = 2.0;
 
       public static final class PID {
         public static final double kP = 0;
@@ -138,6 +141,8 @@ public final class Constants {
 
       public static final double kMaxOutput = Double.POSITIVE_INFINITY;
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
+      public static final double kFloatingLength = 36; // in
+      public static final double kTolerance = 2.0 ;
 
 
       public static final class PID {
@@ -253,4 +258,20 @@ public final class Constants {
       public static final double kFF = 0.0;
     }
   }
+
+  public enum ArmSetpoints {
+    TEST(0, 0);
+
+    public double anchor;
+    public double floating;
+
+    ArmSetpoints(double y, double z) {
+      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
+
+      this.anchor = angles.anchor;
+      this.floating = angles.floating;
+    }
+  }
+
+
 }
