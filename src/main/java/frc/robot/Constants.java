@@ -179,5 +179,8 @@ public final class Constants {
       public static final double kD = 0.002;
       public static final double kFF = 0.0;
     }
+
+    // for drift
+    public static final double kCorrectiveKP = 0.00;
   }
 }

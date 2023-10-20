@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -52,6 +53,8 @@ public class Swerve extends SubsystemBase {
 
 		gyro.zeroYaw();
 		// gyro.setAngleAdjustment(90);
+
+		SmartDashboard.putNumber("corrective kp", SmartDashboard.getNumber("corrective kp", kCorrectiveKP));
 	}
 
 	@Override
@@ -113,13 +116,16 @@ public class Swerve extends SubsystemBase {
 		this.poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), pose);
 	}
 
-	public void drive(
-			double throttle, double strafe, double turn, boolean fieldRelative, double periodSeconds) {
-		final var speeds = // ChassisSpeedsUtil.discretize(
+	public void drive(double inputThrottle, double inputStrafe, double omega, boolean fieldRelative, double periodSeconds) {
+		Translation2d correctedInput = CorrectiveTeleop.generateCorrectedInput(inputThrottle, inputStrafe, omega);
+
+		double throttle = correctedInput.getX();
+		double strafe = correctedInput.getY();
+
+		final var speeds =
 			fieldRelative
-				? ChassisSpeeds.fromFieldRelativeSpeeds(throttle, strafe, turn, gyro.getRotation2d())
-				: new ChassisSpeeds(throttle, strafe, turn);
-				// , periodSeconds);
+				? ChassisSpeeds.fromFieldRelativeSpeeds(throttle, strafe, omega, gyro.getRotation2d())
+				: new ChassisSpeeds(throttle, strafe, omega);
 
 		drive(speeds);
 	}
