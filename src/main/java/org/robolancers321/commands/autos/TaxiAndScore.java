@@ -16,6 +16,8 @@ public class TaxiAndScore extends SequentialCommandGroup {
       Constants.RawArmSetpoints setpoint,
       Score.ItemType type) {
 
+    addRequirements(swerve);
+
     addCommands(
         new ParallelRaceGroup(
             new WaitCommand(2.0),

@@ -16,6 +16,7 @@ public class Score extends SequentialCommandGroup {
 
   public Score(Arm arm, Intake intake, Constants.RawArmSetpoints setpoint, ItemType type) {
 
+    addRequirements(intake);
     addCommands(
         new MoveToRawSetpoint(arm, setpoint),
         new ParallelRaceGroup(
