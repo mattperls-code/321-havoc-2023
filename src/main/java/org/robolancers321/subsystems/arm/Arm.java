@@ -2,28 +2,20 @@
 package org.robolancers321.subsystems.arm;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.robolancers321.Constants;
 
-public class Arm extends SubsystemBase{
+public class Arm extends SubsystemBase {
   private final CANSparkMax anchorMotor;
   private final CANSparkMax floatingMotor;
 
@@ -35,7 +27,6 @@ public class Arm extends SubsystemBase{
 
   public double anchorSetpoint;
   public double floatingSetpoint;
-
 
   public Arm() {
     this.anchorMotor = new CANSparkMax(Constants.Arm.Anchor.kAnchorPort, MotorType.kBrushless);
@@ -65,19 +56,23 @@ public class Arm extends SubsystemBase{
     anchorMotor.enableSoftLimit(SoftLimitDirection.kReverse, Constants.Arm.Anchor.kEnableSoftLimit);
     anchorMotor.enableSoftLimit(SoftLimitDirection.kForward, Constants.Arm.Anchor.kEnableSoftLimit);
 
-    // //limit feedback rate of useless info, give abs encoder feedback at 20 m/s. 65535 m/s is the max
+    // //limit feedback rate of useless info, give abs encoder feedback at 20 m/s. 65535 m/s is the
+    // max
     // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535); //analog sensor
     // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535); //alternate encoder
-    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535); //absolute encoder position
-    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535); //absolute encoder
+    // position
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder
+    // velocity
 
-
-    // //limit feedback rate of useless info, give abs encoder feedback at 20 m/s. 65535 m/s is the max
+    // //limit feedback rate of useless info, give abs encoder feedback at 20 m/s. 65535 m/s is the
+    // max
     // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535); //analog sensor
     // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535); //alternate encoder
-    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535); //absolute encoder position
-    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
-
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535); //absolute encoder
+    // position
+    // anchorMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder
+    // velocity
 
     floatingMotor.setInverted(Constants.Arm.Floating.kInverted);
     floatingMotor.setIdleMode(IdleMode.kBrake);
@@ -91,17 +86,18 @@ public class Arm extends SubsystemBase{
         SoftLimitDirection.kReverse, Constants.Arm.Floating.kEnableSoftLimit);
     floatingMotor.enableSoftLimit(
         SoftLimitDirection.kForward, Constants.Arm.Floating.kEnableSoftLimit);
-  
-    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
-    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
-    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
-    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
 
-  
     // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
     // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
     // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
-    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder velocity
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder
+    // velocity
+
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 65535);
+    // floatingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 65535); //absolute encoder
+    // velocity
 
   }
 
@@ -160,11 +156,7 @@ public class Arm extends SubsystemBase{
 
   public void setFloatingControllerReference(double reference, double ff) {
     floatingPIDController.setReference(
-        reference,
-        ControlType.kPosition,
-        Constants.Arm.Floating.kPIDSlot,
-        ff,
-        ArbFFUnits.kVoltage);
+        reference, ControlType.kPosition, Constants.Arm.Floating.kPIDSlot, ff, ArbFFUnits.kVoltage);
   }
 
   public double getAnchorSetpoint() {

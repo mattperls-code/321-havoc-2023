@@ -9,19 +9,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
-import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
-import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
-import org.robolancers321.subsystems.arm.commands.MoveToSetpoint;
-import org.robolancers321.subsystems.arm.commands.MoveToTunableSetpoint;
-import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
-import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
-import org.robolancers321.subsystems.arm.commands.MoveToSetpoint;
-import org.robolancers321.subsystems.arm.commands.MoveToTunableSetpoint;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.swerve.Swerve;
@@ -70,10 +60,10 @@ public class RobotContainer {
     //   } else {
     //     isCubeMode = false;
     //   }
-    //SmartDashboard.putBoolean("isCubeMode", isCubeMode);
+    // SmartDashboard.putBoolean("isCubeMode", isCubeMode);
 
-    };
-
+  }
+  ;
 
   public Command getAutonomousCommand() {
     return autoPicker.getAutoChooser().getSelected();

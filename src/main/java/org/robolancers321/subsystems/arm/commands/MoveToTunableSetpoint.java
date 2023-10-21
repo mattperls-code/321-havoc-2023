@@ -2,9 +2,7 @@
 package org.robolancers321.subsystems.arm.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import java.util.function.DoubleSupplier;
-
 import org.robolancers321.Constants;
 import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.subsystems.arm.InverseArmKinematics;
@@ -25,7 +23,8 @@ public class MoveToTunableSetpoint extends CommandBase {
 
   @Override
   public void initialize() {
-    InverseArmKinematics.Output currentSetpointAngles = InverseArmKinematics.calculate(this.ySupplier.getAsDouble(), this.zSupplier.getAsDouble());
+    InverseArmKinematics.Output currentSetpointAngles =
+        InverseArmKinematics.calculate(this.ySupplier.getAsDouble(), this.zSupplier.getAsDouble());
 
     arm.setAnchorSetpoint(currentSetpointAngles.anchor);
     arm.setFloatingSetpoint(currentSetpointAngles.floating);
@@ -33,11 +32,14 @@ public class MoveToTunableSetpoint extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    InverseArmKinematics.Output currentSetpointAngles = InverseArmKinematics.calculate(this.ySupplier.getAsDouble(), this.zSupplier.getAsDouble());
+    InverseArmKinematics.Output currentSetpointAngles =
+        InverseArmKinematics.calculate(this.ySupplier.getAsDouble(), this.zSupplier.getAsDouble());
 
     return (MathUtils.epsilonEquals(
             currentSetpointAngles.anchor, arm.getAnchorAngle(), Constants.Arm.Anchor.kTolerance)
         && MathUtils.epsilonEquals(
-            currentSetpointAngles.floating, arm.getFloatingAngle(), Constants.Arm.Floating.kTolerance));
+            currentSetpointAngles.floating,
+            arm.getFloatingAngle(),
+            Constants.Arm.Floating.kTolerance));
   }
 }

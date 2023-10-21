@@ -35,12 +35,16 @@ public final class Constants {
       public static final double kGearRatio = 1;
       public static final double kNominalVoltage = 12.0;
 
-
       /*
       velocity from encoder is rotations/s
       rotations/s * (meters/rotations) = meters/s
       m/s what we need for motion profile
 
+      RelativeEncoder - 360 deg/gearRatio
+      Invert Motor for correct encoder values. setReference negative for correct output
+
+      AbsoluteEncoder - 360
+      Invert Encoder for correct readings. Change sign of setReference and invert Motor for correct ouputs
       */
       public static final double kdistancePerRotation = 0;
 
@@ -48,7 +52,6 @@ public final class Constants {
       public static final double kI = 0;
       public static final double kD = 0;
       public static final int kPIDSlot = 0;
-
 
       public static final double kS = 0;
       public static final double kG = 0;
@@ -106,7 +109,6 @@ public final class Constants {
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
       public static final double kFloatingLength = 36; // in
       public static final double kTolerance = 2.0;
-
     }
   }
 
@@ -206,38 +208,38 @@ public final class Constants {
     }
   }
 
-    public enum ArmSetpoints {
-      /* From game manual, y is from carpet, z is from front of grid
-      SHELF - 37.375 in high + 13 in from cone = 50.375
-      MID - 34 in high, 22.75 in
-      HIGH - 46 in high, 39.75 in
-       */
+  public enum ArmSetpoints {
+    /* From game manual, y is from carpet, z is from front of grid
+    SHELF - 37.375 in high + 13 in from cone = 50.375
+    MID - 34 in high, 22.75 in
+    HIGH - 46 in high, 39.75 in
+     */
 
-      // SHELF(50.375, 0), 
-      // MID(34, 22.75),
-      // HIGH(46, 39.75),
-      // TEST(0, 0);
+    // SHELF(50.375, 0),
+    // MID(34, 22.75),
+    // HIGH(46, 39.75),
+    // TEST(0, 0);
 
-      TEST(0, 0);
+    TEST(0, 0);
 
-      private double anchor;
-      private double floating;
-      private double yOffset = 0; // from the ground
+    private double anchor;
+    private double floating;
+    private double yOffset = 0; // from the ground
 
-      ArmSetpoints(double y, double z) {
-        InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
+    ArmSetpoints(double y, double z) {
+      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
 
       this.anchor = angles.anchor;
       this.floating = angles.floating;
-      }
+    }
 
-      public double getAnchor(){
-        return this.anchor;
-      }
+    public double getAnchor() {
+      return this.anchor;
+    }
 
-      public double getFloating(){
-        return this.floating;
-      }
+    public double getFloating() {
+      return this.floating;
+    }
   }
 
   public static class Intake {
