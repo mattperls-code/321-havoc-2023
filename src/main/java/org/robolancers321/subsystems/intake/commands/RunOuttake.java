@@ -4,7 +4,6 @@ package org.robolancers321.subsystems.intake.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.robolancers321.subsystems.intake.Intake;
 
-
 public class RunOuttake extends CommandBase {
   public double velocity;
 

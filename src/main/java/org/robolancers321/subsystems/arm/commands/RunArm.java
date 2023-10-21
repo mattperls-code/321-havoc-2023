@@ -17,41 +17,13 @@ public class RunArm extends CommandBase {
   @Override
   public void execute() {
     double anchorFF =
-        Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(arm.anchorSetpoint), 0);
-    arm.setAnchorControllerReference(arm.anchorSetpoint, anchorFF);
+        Constants.Arm.Anchor.ANCHOR_FEEDFORWARD.calculate(
+            Math.toRadians(arm.getAnchorAngle() - 180), 0);
+    arm.setAnchorControllerReference(arm.getAnchorSetpoint(), anchorFF);
 
-    double floatingFF =
-        Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
-            Math.toRadians(arm.floatingSetpoint), 0);
-    arm.setFloatingControllerReference(arm.floatingSetpoint, floatingFF);
-
-    // MOTION PROFILE
-    // TrapezoidProfile.State anchorProfileState =
-    // arm.periodicIO.anchorProfile.calculate(Timer.getFPGATimestamp() -
-    // arm.periodicIO.anchorProfileStartTime);
-
-    // TrapezoidProfile.State floatingProfileState =
-    // arm.periodicIO.floatingProfile.calculate(Timer.getFPGATimestamp() -
-    // arm.periodicIO.floatingProfileStartTime);
-
-    // arm.periodicIO.anchorFF =
-    // Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(Math.toRadians(anchorProfileState.position),
-    // anchorProfileState.velocity);
-    // arm.periodicIO.floatingFF =
-    // Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(Math.toRadians(floatingProfileState.position),
-    // floatingProfileState.velocity);
-
-    // arm.floatingPIDController.setReference(
-    //   floatingProfileState.position,
-    //   ControlType.kPosition,
-    //   Constants.Arm.Floating.PID.kSlot,
-    //   arm.periodicIO.floatingFF,
-    //   SparkMaxPIDController.ArbFFUnits.kVoltage);
-    // arm.anchorPIDController.setReference(
-    //   anchorProfileState.position,
-    //   ControlType.kPosition,
-    //   Constants.Arm.Anchor.PID.kSlot,
-    //   arm.periodicIO.anchorFF,
-    //   SparkMaxPIDController.ArbFFUnits.kVoltage);
+    // double floatingFF =
+    //     Constants.Arm.Floating.FF.FLOATING_FEEDFORWARD.calculate(
+    //         Math.toRadians(arm.getFloatingSetpoint()), 0);
+    arm.setFloatingControllerReference(arm.getFloatingSetpoint(), 0);
   }
 }

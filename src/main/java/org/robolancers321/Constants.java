@@ -22,6 +22,7 @@ import org.robolancers321.subsystems.arm.InverseArmKinematics;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kManipulatorControllerPort = 1;
     public static final double kJoystickDeadband = 0.1;
   }
 
@@ -29,27 +30,34 @@ public final class Constants {
     public static class Anchor {
       public static final int kAnchorPort = 0;
       public static final int kAnchorEncoderPort = 0;
-      public static final boolean kInverted = false;
+      public static final boolean kMotorInverted = false;
       public static final int kCurrentLimit = 60; // 40 - 60
       public static final double kGearRatio = 1;
+      public static final double kNominalVoltage = 12.0;
 
       /*
       velocity from encoder is rotations/s
       rotations/s * (meters/rotations) = meters/s
       m/s what we need for motion profile
 
+      RelativeEncoder - 360 deg/gearRatio
+      Invert Motor for correct encoder values. setReference negative for correct output
+
+      AbsoluteEncoder - 360
+      Invert Encoder for correct readings. Change sign of setReference and invert Motor for correct ouputs
       */
       public static final double kdistancePerRotation = 0;
 
       public static final double kP = 0;
       public static final double kI = 0;
       public static final double kD = 0;
+      public static final int kPIDSlot = 0;
 
-      public static final double ks = 0;
-      public static final double kg = 0;
-      public static final double kv = 0;
-      public static final double ka = 0;
-      public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+      public static final double kA = 0;
+      public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
@@ -65,47 +73,6 @@ public final class Constants {
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
       public static final double kAnchorLength = 33; // in
       public static final double kTolerance = 2.0;
-
-      public static final class PID {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kSlot = 0;
-      }
-
-      public static final class FF {
-        // change to final when done tuning
-        public static double kS = 0;
-        public static double kG = 0; // gravity FF most likely only tune this gain
-        public static final double kV = 0;
-        public static final double kA = 0;
-        public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
-      }
-
-      public static final class MP {
-        public static final double maxVel = 2.0;
-        public static final double maxAccel = 1.0;
-        public static final TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
-            new TrapezoidProfile.Constraints(maxVel, maxAccel);
-      }
-
-      public static final class Conversions {
-        /*
-        velocity - motorRot/s
-        motorRot/s * mechRot/motorRot * meters/mechRot = meters/s
-        */
-
-        public static final double kGearRatio = 64; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kGearRadius = 0; // m
-        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
-
-        /*
-        Position - motorRot
-        motorRot * mechRot/motorRot * deg/mechRot = deg
-         */
-
-        public static final double kDegPerRot = kGearRatio * 360;
-      }
     }
 
     public static class Floating {
@@ -113,18 +80,20 @@ public final class Constants {
       public static final int kFloatingEncoderPort = 0;
       public static final boolean kInverted = false;
       public static final int kCurrentLimit = 60; // 40 - 60
+      public static final double kNominalVoltage = 12.0;
       public static final double kGearRatio = 1;
       public static final double kdistancePerRotation = 0;
 
       public static final double kP = 0;
       public static final double kI = 0;
       public static final double kD = 0;
+      public static final int kPIDSlot = 0;
 
-      public static final double ks = 0;
-      public static final double kg = 0;
-      public static final double kv = 0;
-      public static final double ka = 0;
-      public static final ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+      public static final double kA = 0;
+      public static ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
@@ -140,37 +109,6 @@ public final class Constants {
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
       public static final double kFloatingLength = 36; // in
       public static final double kTolerance = 2.0;
-
-      public static final class PID {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kSlot = 0;
-      }
-
-      public static final class FF {
-        // change to final when done tuning
-        public static double kS = 0;
-        public static double kG = 0; // gravity FF most likely only tune this gain
-        public static final double kV = 0;
-        public static final double kA = 0;
-        public static final ArmFeedforward FLOATING_FEEDFORWARD =
-            new ArmFeedforward(kS, kG, kV, kA);
-      }
-
-      public static final class MP {
-        public static final double maxVel = 1.0;
-        public static final double maxAccel = 1.0;
-        public static final TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
-            new TrapezoidProfile.Constraints(maxVel, maxAccel);
-      }
-
-      public static final class Conversions {
-        public static final double kGearRatio = 25; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kGearRadius = 0; // m
-        public static final double kDistPerRot = kGearRatio * (2 * kGearRadius * Math.PI);
-        public static final double kDegPerRot = kGearRatio * 360;
-      }
     }
   }
 
@@ -271,16 +209,36 @@ public final class Constants {
   }
 
   public enum ArmSetpoints {
+    /* From game manual, y is from carpet, z is from front of grid
+    SHELF - 37.375 in high + 13 in from cone = 50.375
+    MID - 34 in high, 22.75 in
+    HIGH - 46 in high, 39.75 in
+     */
+
+    // SHELF(50.375, 0),
+    // MID(34, 22.75),
+    // HIGH(46, 39.75),
+    // TEST(0, 0);
+
     TEST(0, 0);
 
-    public double anchor;
-    public double floating;
+    private double anchor;
+    private double floating;
+    private double yOffset = 0; // from the ground
 
     ArmSetpoints(double y, double z) {
-      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y, z);
+      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
 
       this.anchor = angles.anchor;
       this.floating = angles.floating;
+    }
+
+    public double getAnchor() {
+      return this.anchor;
+    }
+
+    public double getFloating() {
+      return this.floating;
     }
   }
 

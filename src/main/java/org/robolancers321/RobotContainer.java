@@ -44,7 +44,26 @@ public class RobotContainer {
     configureBindings();
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    // driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
+    // driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
+    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+
+    // driver.a().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.SHELF, isCubeMode));
+    // driver.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
+    // driver.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
+
+    // driverController.start().onTrue(new InstantCommand(() -> {
+    //   if(isCubeMode == false){
+    //     isCubeMode = true;
+    //   } else {
+    //     isCubeMode = false;
+    //   }
+    // SmartDashboard.putBoolean("isCubeMode", isCubeMode);
+
+  }
+  ;
 
   public Command getAutonomousCommand() {
     return autoPicker.getAutoChooser().getSelected();
