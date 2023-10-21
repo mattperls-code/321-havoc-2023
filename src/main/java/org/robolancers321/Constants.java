@@ -50,11 +50,11 @@ public final class Constants {
       public static final int kPIDSlot = 0;
 
 
-      public static final double ks = 0;
-      public static final double kg = 0;
-      public static final double kv = 0;
-      public static final double ka = 0;
-      public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+      public static final double kA = 0;
+      public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
@@ -86,11 +86,11 @@ public final class Constants {
       public static final double kD = 0;
       public static final int kPIDSlot = 0;
 
-      public static final double ks = 0;
-      public static final double kg = 0;
-      public static final double kv = 0;
-      public static final double ka = 0;
-      public static ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+      public static final double kA = 0;
+      public static ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;

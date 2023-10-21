@@ -190,25 +190,20 @@ public class Arm extends SubsystemBase{
         "floatingSetpoint", SmartDashboard.getNumber("floatingSetpoint", getFloatingSetpoint()));
 
     SmartDashboard.putNumber(
-        "anchorSetpoint", SmartDashboard.getNumber("anchorSetpoint", getAnchorSetpoint()));
+        "anchorKP", SmartDashboard.getNumber("anchorKP", Constants.Arm.Anchor.kP));
     SmartDashboard.putNumber(
-        "floatingSetpoint", SmartDashboard.getNumber("floatingSetpoint", getFloatingSetpoint()));
+        "anchorKI", SmartDashboard.getNumber("anchorKI", Constants.Arm.Anchor.kI));
+    SmartDashboard.putNumber(
+        "anchorKD", SmartDashboard.getNumber("anchorKD", Constants.Arm.Anchor.kD));
+    SmartDashboard.putNumber(
+        "anchorKG", SmartDashboard.getNumber("anchorKG", Constants.Arm.Anchor.kG));
 
     SmartDashboard.putNumber(
-        "anchorKP", SmartDashboard.getNumber("anchorKP", Constants.Arm.Anchor.PID.kP));
+        "floatingKP", SmartDashboard.getNumber("floatingKP", Constants.Arm.Floating.kP));
     SmartDashboard.putNumber(
-        "anchorKI", SmartDashboard.getNumber("anchorKI", Constants.Arm.Anchor.PID.kI));
+        "floatingKI", SmartDashboard.getNumber("floatingKI", Constants.Arm.Floating.kI));
     SmartDashboard.putNumber(
-        "anchorKD", SmartDashboard.getNumber("anchorKD", Constants.Arm.Anchor.PID.kD));
-    SmartDashboard.putNumber(
-        "anchorKG", SmartDashboard.getNumber("anchorKG", Constants.Arm.Anchor.FF.kG));
-
-    SmartDashboard.putNumber(
-        "floatingKP", SmartDashboard.getNumber("floatingKP", Constants.Arm.Floating.PID.kP));
-    SmartDashboard.putNumber(
-        "floatingKI", SmartDashboard.getNumber("floatingKI", Constants.Arm.Floating.PID.kI));
-    SmartDashboard.putNumber(
-        "floatingKD", SmartDashboard.getNumber("floatingKD", Constants.Arm.Floating.PID.kD));
+        "floatingKD", SmartDashboard.getNumber("floatingKD", Constants.Arm.Floating.kD));
   }
 
   private void tuneControllers() {
@@ -243,7 +238,6 @@ public class Arm extends SubsystemBase{
 
     SmartDashboard.putNumber("anchorOutput", this.anchorMotor.getAppliedOutput());
     SmartDashboard.putNumber("floatingOutput", this.floatingMotor.getAppliedOutput());
-    
   }
 
   @Override
