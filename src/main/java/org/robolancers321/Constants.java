@@ -22,6 +22,7 @@ import org.robolancers321.subsystems.arm.InverseArmKinematics;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kManipulatorControllerPort = 1;
     public static final double kJoystickDeadband = 0.1;
   }
 
@@ -29,9 +30,11 @@ public final class Constants {
     public static class Anchor {
       public static final int kAnchorPort = 0;
       public static final int kAnchorEncoderPort = 0;
-      public static final boolean kInverted = false;
+      public static final boolean kMotorInverted = false;
       public static final int kCurrentLimit = 60; // 40 - 60
       public static final double kGearRatio = 1;
+      public static final double kNominalVoltage = 12.0;
+
 
       /*
       velocity from encoder is rotations/s
@@ -44,12 +47,14 @@ public final class Constants {
       public static final double kP = 0;
       public static final double kI = 0;
       public static final double kD = 0;
+      public static final int kPIDSlot = 0;
+
 
       public static final double ks = 0;
       public static final double kg = 0;
       public static final double kv = 0;
       public static final double ka = 0;
-      public static final ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
@@ -58,7 +63,6 @@ public final class Constants {
 
       public static final double kMinAngle = Double.NEGATIVE_INFINITY;
       public static final double kMaxAngle = Double.POSITIVE_INFINITY;
-      public static final double kNominalVoltage = 12.0;
       public static final boolean kEnableSoftLimit = false;
       public static final double kZeroPosition = 0;
 
@@ -66,47 +70,6 @@ public final class Constants {
       public static final double kMinOutput = Double.NEGATIVE_INFINITY;
       public static final double kAnchorLength = 33; // in
       public static final double kTolerance = 2.0;
-
-      public static final class PID {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kSlot = 0;
-      }
-
-      public static final class FF {
-        // change to final when done tuning
-        public static final double kS = 0;
-        public static double kG = 0;
-        public static final double kV = 0;
-        public static final double kA = 0;
-        public static ArmFeedforward ANCHOR_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
-      }
-
-      public static final class MP {
-        public static final double maxVel = 2.0;
-        public static final double maxAccel = 1.0;
-        public static final TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
-            new TrapezoidProfile.Constraints(maxVel, maxAccel);
-      }
-
-      public static final class Conversions {
-        /*
-        velocity - motorRot/s
-        motorRot/s * deg/motorRot = deg/s
-
-        Position - motorRot
-        motorRot * mechRot/motorRot (gearRatio) * deg/mechRot = deg
-
-        (endAngle - startAngle) / valueAtEndAngle)
-         */
-
-        public static final double kGearRatio = 64;
-        public static final double kDegPerRot = (90.0 - (180.0 - 145.0)) / (8.333358764648438);
-      }
-      
-      // 145deg -> -161.52581787109375
-      // 90deg -> -108.32477569580078
     }
 
     public static class Floating {
@@ -114,18 +77,20 @@ public final class Constants {
       public static final int kFloatingEncoderPort = 0;
       public static final boolean kInverted = false;
       public static final int kCurrentLimit = 60; // 40 - 60
+      public static final double kNominalVoltage = 12.0;
       public static final double kGearRatio = 1;
       public static final double kdistancePerRotation = 0;
 
       public static final double kP = 0;
       public static final double kI = 0;
       public static final double kD = 0;
+      public static final int kPIDSlot = 0;
 
       public static final double ks = 0;
       public static final double kg = 0;
       public static final double kv = 0;
       public static final double ka = 0;
-      public static final ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
+      public static ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(ks, kg, kv, ka);
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
@@ -142,33 +107,6 @@ public final class Constants {
       public static final double kFloatingLength = 36; // in
       public static final double kTolerance = 2.0;
 
-      public static final class PID {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kSlot = 0;
-      }
-
-      public static final class FF {
-        public static final double kS = 0;
-        public static final double kG = 0;
-        public static final double kV = 0;
-        public static final double kA = 0;
-        public static final ArmFeedforward FLOATING_FEEDFORWARD =
-            new ArmFeedforward(kS, kG, kV, kA);
-      }
-
-      public static final class MP {
-        public static final double maxVel = 1.0;
-        public static final double maxAccel = 1.0;
-        public static final TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
-            new TrapezoidProfile.Constraints(maxVel, maxAccel);
-      }
-
-      public static final class Conversions {
-        public static final double kGearRatio = 25; // mechRot/motorRot. TODO check if correct or 1
-        public static final double kDegPerRot = kGearRatio * 360;
-      }
     }
   }
 
@@ -291,7 +229,15 @@ public final class Constants {
 
       this.anchor = angles.anchor;
       this.floating = angles.floating;
-    }
+      }
+
+      public double getAnchor(){
+        return this.anchor;
+      }
+
+      public double getFloating(){
+        return this.floating;
+      }
   }
 
   public static class Intake {

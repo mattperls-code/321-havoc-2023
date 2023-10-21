@@ -17,7 +17,7 @@ public class RunArm extends CommandBase {
   @Override
   public void execute() {
     double anchorFF =
-        Constants.Arm.Anchor.FF.ANCHOR_FEEDFORWARD.calculate(
+        Constants.Arm.Anchor.ANCHOR_FEEDFORWARD.calculate(
             Math.toRadians(arm.getAnchorAngle() - 180), 0);
     arm.setAnchorControllerReference(arm.getAnchorSetpoint(), anchorFF);
 
