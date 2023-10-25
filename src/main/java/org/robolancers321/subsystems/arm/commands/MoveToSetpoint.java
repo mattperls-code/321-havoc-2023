@@ -1,6 +1,8 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321.subsystems.arm.commands;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.robolancers321.Constants;
 import org.robolancers321.Constants.ArmSetpoints;
@@ -14,22 +16,25 @@ public class MoveToSetpoint extends CommandBase {
   private double floatingSetpoint;
   private double cubeOffset = 0;
 
-  public MoveToSetpoint(Arm arm, ArmSetpoints setpoint, boolean isCubeMode) {
+  public MoveToSetpoint(Arm arm, double anchor, double floating) {
     this.arm = arm;
+    this.anchorSetpoint = anchor;
+    this.floatingSetpoint = floating;
 
-    this.anchorSetpoint = setpoint.getAnchor();
+    // this.anchorSetpoint = setpoint.getAnchor();
 
-    if (isCubeMode) {
-      this.floatingSetpoint = setpoint.getFloating() + this.cubeOffset;
-    } else {
-      this.floatingSetpoint = setpoint.getFloating();
-    }
+    // if (isCubeMode) {
+    //   this.floatingSetpoint = setpoint.getFloating() + this.cubeOffset;
+    // } else {
+    //   this.floatingSetpoint = setpoint.getFloating();
+    // }
   }
 
   @Override
   public void initialize() {
     arm.setAnchorSetpoint(anchorSetpoint);
     arm.setFloatingSetpoint(floatingSetpoint);
+
   }
 
   @Override

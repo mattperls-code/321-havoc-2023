@@ -28,10 +28,10 @@ public final class Constants {
 
   public static class Arm {
     public static class Anchor {
-      public static final int kAnchorPort = 0;
-      public static final int kAnchorEncoderPort = 0;
-      public static final boolean kMotorInverted = false;
-      public static final int kCurrentLimit = 60; // 40 - 60
+      public static final int kAnchorPort = 15;
+      public static final boolean kMotorInverted = true;
+      public static final boolean kEncoderInverted = true;
+      public static final int kCurrentLimit = 50; // 40 - 60
       public static final double kGearRatio = 1;
       public static final double kNominalVoltage = 12.0;
 
@@ -46,7 +46,7 @@ public final class Constants {
       AbsoluteEncoder - 360
       Invert Encoder for correct readings. Change sign of setReference and invert Motor for correct ouputs
       */
-      public static final double kdistancePerRotation = 0;
+      public static final double kdistancePerRotation = 360;
 
       public static final double kP = 0;
       public static final double kI = 0;
@@ -61,28 +61,29 @@ public final class Constants {
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
-      public static final TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
+      public static TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kMinAngle = 0;
+      public static final double kMaxAngle = 140;
       public static final boolean kEnableSoftLimit = false;
-      public static final double kZeroPosition = 0;
+      public static final int kFloatingEncoderPort = 0;
+      public static final double kZeroPosition = 29.4;
 
-      public static final double kMaxOutput = Double.POSITIVE_INFINITY;
-      public static final double kMinOutput = Double.NEGATIVE_INFINITY;
-      public static final double kAnchorLength = 33; // in
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
+      public static final double kAnchorLength = Units.inchesToMeters(34.5); // in
       public static final double kTolerance = 2.0;
     }
 
     public static class Floating {
-      public static final int kFloatingPort = 0;
-      public static final int kFloatingEncoderPort = 0;
-      public static final boolean kInverted = false;
-      public static final int kCurrentLimit = 60; // 40 - 60
+      public static final int kFloatingPort = 16;
+      public static final boolean kMotorInverted = false;
+      public static final boolean kEncoderInverted = false;
+      public static final int kCurrentLimit = 40; // 40 - 60
       public static final double kNominalVoltage = 12.0;
-      public static final double kGearRatio = 1;
-      public static final double kdistancePerRotation = 0;
+      public static final double kGearRatio = 25;
+      public static final double kdistancePerRotation = 360;
 
       public static final double kP = 0;
       public static final double kI = 0;
@@ -97,17 +98,17 @@ public final class Constants {
 
       public static final double maxVelocity = 0;
       public static final double maxAcceleration = 0;
-      public static final TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
+      public static TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-      public static final double kMinAngle = Double.NEGATIVE_INFINITY;
-      public static final double kMaxAngle = Double.POSITIVE_INFINITY;
+      public static final double kMinAngle = -20;
+      public static final double kMaxAngle = 30;
       public static final boolean kEnableSoftLimit = false;
-      public static final double kZeroPosition = 0;
+      public static final double kZeroPosition = 184;
 
-      public static final double kMaxOutput = Double.POSITIVE_INFINITY;
-      public static final double kMinOutput = Double.NEGATIVE_INFINITY;
-      public static final double kFloatingLength = 36; // in
+      public static final double kMaxOutput = 1;
+      public static final double kMinOutput = -1;
+      public static final double kFloatingLength = Units.inchesToMeters(35); // in
       public static final double kTolerance = 2.0;
     }
   }
@@ -215,22 +216,21 @@ public final class Constants {
     HIGH - 46 in high, 39.75 in
      */
 
-    // SHELF(50.375, 0),
-    // MID(34, 22.75),
-    // HIGH(46, 39.75),
-    // TEST(0, 0);
-
+    SHELF(50.375, 0),
+    MID(34, 22.75),
+    HIGH(46, 39.75),
     TEST(0, 0);
 
     private double anchor;
     private double floating;
-    private double yOffset = 0; // from the ground
+    private double yOffset = 17; // in
+    private double zOffset = 12;
 
     ArmSetpoints(double y, double z) {
-      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y - this.yOffset, z);
+      InverseArmKinematics.Output angles = InverseArmKinematics.calculate(y + this.yOffset, z);
 
       this.anchor = angles.anchor;
-      this.floating = angles.floating;
+      this.floating = angles.anchor - angles.floating;
     }
 
     public double getAnchor() {

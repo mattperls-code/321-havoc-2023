@@ -8,10 +8,14 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
+import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
+import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
+import org.robolancers321.subsystems.arm.commands.MoveToSetpoint;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.swerve.Swerve;
@@ -37,7 +41,7 @@ public class RobotContainer {
   private final Autos autoPicker = new Autos(swerve, arm, intake);
 
   public RobotContainer() {
-    swerve.setDefaultCommand(swerve.drive(this::getThrottle, this::getStrafe, this::getTurn, true));
+    // swerve.setDefaultCommand(swerve.drive(this::getThrottle, this::getStrafe, this::getTurn, true));
 
     this.arm.setDefaultCommand(new RunArm(arm));
 
@@ -45,12 +49,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
-    // driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
-    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
-    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, true));
 
-    // driver.a().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.SHELF, isCubeMode));
+    
+    driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
+    driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
+    driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    driver.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+
+    driver.a().onTrue(new MoveToSetpoint(arm, arm.getAnchorSetpoint(), arm.getFloatingSetpoint()));
     // driver.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
     // driver.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
 
