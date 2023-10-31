@@ -48,9 +48,9 @@ public final class Constants {
       */
       public static final double kdistancePerRotation = 360;
 
-      public static final double kP = 0;
+      public static final double kP = 0.01;
       public static final double kI = 0;
-      public static final double kD = 0;
+      public static final double kD = 0.00015;
       public static final int kPIDSlot = 0;
 
       public static final double kS = 0;
@@ -64,14 +64,13 @@ public final class Constants {
       public static TrapezoidProfile.Constraints ANCHOR_CONSTRAINTS =
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-      public static final double kMinAngle = 0;
-      public static final double kMaxAngle = 140;
+      public static final double kMinAngle = 40;
+      public static final double kMaxAngle = 110;
       public static final boolean kEnableSoftLimit = false;
-      public static final int kFloatingEncoderPort = 0;
-      public static final double kZeroPosition = 29.4;
+      public static final double kZeroPosition = 0;
 
-      public static final double kMaxOutput = 1;
-      public static final double kMinOutput = -1;
+      public static double kMaxOutput = 0.2;
+      public static double kMinOutput = -0.1;
       public static final double kAnchorLength = Units.inchesToMeters(34.5); // in
       public static final double kTolerance = 2.0;
     }
@@ -85,9 +84,9 @@ public final class Constants {
       public static final double kGearRatio = 25;
       public static final double kdistancePerRotation = 360;
 
-      public static final double kP = 0;
+      public static final double kP = 0.027;
       public static final double kI = 0;
-      public static final double kD = 0;
+      public static final double kD = 0.0001;
       public static final int kPIDSlot = 0;
 
       public static final double kS = 0;
@@ -96,19 +95,19 @@ public final class Constants {
       public static final double kA = 0;
       public static ArmFeedforward FLOATING_FEEDFORWARD = new ArmFeedforward(kS, kG, kV, kA);
 
-      public static final double maxVelocity = 0;
-      public static final double maxAcceleration = 0;
+      public static final double maxVelocity = 40;
+      public static final double maxAcceleration = 60;
       public static TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-      public static final double kMinAngle = -20;
+      public static final double kMinAngle = -50;
       public static final double kMaxAngle = 30;
       public static final boolean kEnableSoftLimit = false;
-      public static final double kZeroPosition = 184;
+      public static final double kZeroPosition = 0;
 
-      public static final double kMaxOutput = 1;
-      public static final double kMinOutput = -1;
-      public static final double kFloatingLength = Units.inchesToMeters(35); // in
+      public static double kMaxOutput = 0.25;
+      public static double kMinOutput = -0.15;
+      public static final double kFloatingLength = 1.0 * Units.inchesToMeters(35); // in
       public static final double kTolerance = 2.0;
     }
   }
@@ -195,9 +194,11 @@ public final class Constants {
   }
 
   public enum RawArmSetpoints {
-    SHELF(0, 0),
-    MID(0, 0),
-    HIGH(0, 0);
+    SHELF(77, 2),
+    MID(82, -9),
+    HIGH(63, 20),
+    CONTRACT(100, -50);
+
 
     public final double anchor;
 

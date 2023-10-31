@@ -14,8 +14,6 @@ public class RunArm extends CommandBase {
   public RunArm(Arm arm) {
     this.arm = arm;
 
-
-
     addRequirements(arm);
   }
 
@@ -25,8 +23,8 @@ public class RunArm extends CommandBase {
     double anchorFF = arm.calculateAnchorFF();
     double floatingFF = arm.calculateFloatingFF();
 
-    arm.setAnchorControllerReference(arm.getAnchorSetpoint(), anchorFF);
-    arm.setFloatingControllerReference(arm.getFloatingSetpoint(), floatingFF);
+    arm.setAnchorControllerReference(anchorFF);
+    arm.setFloatingControllerReference(floatingFF);
 
   // arm.anchorProfile =
   //   new TrapezoidProfile(Constants.Arm.Anchor.ANCHOR_CONSTRAINTS, 

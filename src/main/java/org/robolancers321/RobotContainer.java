@@ -15,11 +15,12 @@ import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
 import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
-import org.robolancers321.subsystems.arm.commands.MoveToSetpoint;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.swerve.Swerve;
 import org.robolancers321.subsystems.swerve.SwerveModule;
+import org.robolancers321.Constants;
+
 
 public class RobotContainer {
   private final Field2d field = new Field2d();
@@ -50,13 +51,19 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    
-    driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
-    driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
-    driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
-    driver.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+    driver.x().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.MID));
+    driver.y().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.HIGH));
+    driver.a().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELF));
+    driver.b().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.CONTRACT));
 
-    driver.a().onTrue(new MoveToSetpoint(arm, arm.getAnchorSetpoint(), arm.getFloatingSetpoint()));
+
+    
+    // driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
+    // driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
+    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    // driver.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+
+    // driver.a().onTrue(new MoveToSetpoint(arm, arm.getAnchorSetpoint(), arm.getFloatingSetpoint()));
     // driver.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
     // driver.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
 
