@@ -105,7 +105,7 @@ public final class Constants {
       public static final boolean kEnableSoftLimit = false;
       public static final double kZeroPosition = 0;
 
-      public static double kMaxOutput = 0.25;
+      public static double kMaxOutput = 0.26;
       public static double kMinOutput = -0.15;
       public static final double kFloatingLength = 1.0 * Units.inchesToMeters(35); // in
       public static final double kTolerance = 2.0;

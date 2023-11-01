@@ -44,8 +44,8 @@ public class Arm extends SubsystemBase {
 
   public double anchorSetpoint;
   public double floatingSetpoint;
-  public double anchorOffset;
-  public double floatingOffset;
+  public double anchorOffset = 0;
+  public double floatingOffset = 0;
   public double kG = 0.044;
 
   // public TrapezoidProfile anchorProfile = new TrapezoidProfile(Constants.Arm.Anchor.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
@@ -232,15 +232,14 @@ public class Arm extends SubsystemBase {
       }).until(() -> getAnchorAtSetpoint() && getFloatingAtSetpoint());
     };
 
-
   public CommandBase moveArmSeparate(RawArmSetpoints setpoint){
     return Commands.sequence(
       runOnce(() -> {
-        setAnchorSetpoint(setpoint.anchor);
-      }).until(() -> getAnchorAtSetpoint()),
-      runOnce(() -> {
         setFloatingSetpoint(setpoint.floating);
-      }).until(() -> getFloatingAtSetpoint())
+      }).until(() -> getFloatingAtSetpoint()),
+      runOnce(() -> {
+        setAnchorSetpoint(setpoint.anchor);
+      }).until(() -> getAnchorAtSetpoint())
     );
   }
 
@@ -256,16 +255,7 @@ public class Arm extends SubsystemBase {
     });
   }
 
-  // public CommandBase moveArmSeparate(RawArmSetpoints setpoint){
-  //   return Commands.sequence(
-  //     runOnce(() -> {
-  //       setFloatingSetpoint(setpoint.floating);
-  //     }).until(() -> getFloatingAtSetpoint()),
-  //     runOnce(() -> {
-  //       setAnchorSetpoint(setpoint.anchor);
-  //     }).until(() -> getAnchorAtSetpoint())
-  //   );
-  // }
+ 
 
   private void initTuneControllers() {
     SmartDashboard.putNumber(

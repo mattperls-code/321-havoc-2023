@@ -54,7 +54,7 @@ public class RobotContainer {
     driver.x().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.MID));
     driver.y().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.HIGH));
     driver.a().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELF));
-    driver.b().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.CONTRACT));
+    driver.b().onTrue(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
 
     
