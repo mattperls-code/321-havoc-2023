@@ -44,8 +44,6 @@ public class Arm extends SubsystemBase {
 
   public double anchorSetpoint;
   public double floatingSetpoint;
-  public double anchorOffset = 0;
-  public double floatingOffset = 0;
   public double kG = 0.044;
 
   // public TrapezoidProfile anchorProfile = new TrapezoidProfile(Constants.Arm.Anchor.ANCHOR_CONSTRAINTS, new TrapezoidProfile.State());
@@ -180,12 +178,12 @@ public class Arm extends SubsystemBase {
   }
 
   public void setAnchorSetpoint(double setpoint){
-    double clampSetpoint = MathUtil.clamp(setpoint + anchorOffset, Constants.Arm.Anchor.kMinAngle, Constants.Arm.Anchor.kMaxAngle);
+    double clampSetpoint = MathUtil.clamp(setpoint, Constants.Arm.Anchor.kMinAngle, Constants.Arm.Anchor.kMaxAngle);
     anchorPIDController.setSetpoint(clampSetpoint);
   }
 
   public void setFloatingSetpoint(double setpoint){
-    double clampSetpoint = MathUtil.clamp(setpoint + floatingOffset, Constants.Arm.Floating.kMinAngle, Constants.Arm.Floating.kMaxAngle);
+    double clampSetpoint = MathUtil.clamp(setpoint, Constants.Arm.Floating.kMinAngle, Constants.Arm.Floating.kMaxAngle);
     floatingPIDController.setSetpoint(clampSetpoint);
   }
 
@@ -210,11 +208,12 @@ public class Arm extends SubsystemBase {
 
     double anchorFF = this.kG * (l1 * Math.cos(alpha) + l2 * Math.cos(beta));
 
-    if(alpha > 95 * Math.PI / 180){
-      return -anchorFF;
-    }
-    return alpha > (85 * Math.PI / 180.0) ? 0 : anchorFF;
+    // if(alpha > 95 * Math.PI / 180){
+    //   return -anchorFF;
+    // }
+    // return alpha > (85 * Math.PI / 180.0) ? 0 : anchorFF;
 
+    return alpha > 90 ? -anchorFF : anchorFF;
   }
 
   public double calculateFloatingFF(){
@@ -241,18 +240,6 @@ public class Arm extends SubsystemBase {
         setAnchorSetpoint(setpoint.anchor);
       }).until(() -> getAnchorAtSetpoint())
     );
-  }
-
-  public CommandBase zeroAnchorOffset(){
-    return runOnce(() -> {
-      anchorOffset = 0;
-    });
-  }
-
-  public CommandBase zerofloatingOffset(){
-    return runOnce(() -> {
-      floatingOffset = 0;
-    });
   }
 
  
@@ -363,8 +350,6 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("floatingAngle", getFloatingAngle());
     SmartDashboard.putNumber("anchorSetpoint", anchorPIDController.getSetpoint());
     SmartDashboard.putNumber("floatingSetpoint", floatingPIDController.getSetpoint());
-    SmartDashboard.putNumber("anchorOffset", anchorOffset);
-    SmartDashboard.putNumber("floatingOffset", anchorOffset);
   }
 
 }

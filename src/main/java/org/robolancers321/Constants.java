@@ -194,7 +194,9 @@ public final class Constants {
   }
 
   public enum RawArmSetpoints {
-    SHELF(77, 2),
+    SHELFCONE(77, 2),
+    SHELFCUBE(0, 0), //tune
+    GROUND(0, 0), //tune
     MID(82, -9),
     HIGH(63, 20),
     CONTRACT(100, -50);

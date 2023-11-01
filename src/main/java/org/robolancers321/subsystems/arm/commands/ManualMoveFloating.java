@@ -8,7 +8,7 @@ public class ManualMoveFloating extends CommandBase {
   private Arm arm;
   private final double degPerSec = 1;
   private double angleOffset = degPerSec / 1000 * 20;
-  //  deg/s / 1000 = deg/ms * ms per loop = deg/loop
+  //  deg/s / 1000 = deg/ms * ms/loop = deg/loop
 
   private boolean reverse;
 
@@ -22,11 +22,9 @@ public class ManualMoveFloating extends CommandBase {
   @Override
   public void execute() {
     if (reverse) {
-      arm.floatingOffset -= angleOffset;
-      arm.setFloatingSetpoint(arm.getFloatingSetpoint() + angleOffset);
+      arm.setFloatingSetpoint(arm.getFloatingAngle() - angleOffset);
     } else {
-      arm.floatingOffset += angleOffset;
-      arm.setFloatingSetpoint(arm.getFloatingSetpoint() + angleOffset);
+      arm.setFloatingSetpoint(arm.getFloatingAngle() + angleOffset);
     }
   }
 }
