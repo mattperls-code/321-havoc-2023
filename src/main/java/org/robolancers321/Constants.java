@@ -100,7 +100,7 @@ public final class Constants {
       public static TrapezoidProfile.Constraints FLOATING_CONSTRAINTS =
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-      public static final double kMinAngle = -50;
+      public static final double kMinAngle = -55;
       public static final double kMaxAngle = 30;
       public static final boolean kEnableSoftLimit = false;
       public static final double kZeroPosition = 0;
