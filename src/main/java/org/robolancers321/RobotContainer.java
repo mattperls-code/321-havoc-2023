@@ -17,6 +17,7 @@ import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
 import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
+import org.robolancers321.subsystems.arm.commands.MoveArmSeparate;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.intake.commands.RunIntake;
 import org.robolancers321.subsystems.intake.commands.RunOuttake;
@@ -45,8 +46,8 @@ public class RobotContainer {
   private final Autos autoPicker = new Autos(swerve, arm, intake);
 
   public RobotContainer() {
-    // swerve.setDefaultCommand(swerve.drive(this::getThrottle, this::getStrafe, this::getTurn,
-    // true));
+    swerve.setDefaultCommand(swerve.drive(this::getThrottle, this::getStrafe, this::getTurn,
+    true));
 
     this.arm.setDefaultCommand(new RunArm(arm));
 
@@ -55,20 +56,19 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-
     //manipulator arm
     manipulator.b().onTrue(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
-    manipulator.x().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.MID));
-    manipulator.y().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.HIGH));
-    manipulator.a().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCONE)); //also ground
+    manipulator.x().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.MID));
+    manipulator.y().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.HIGH));
+    manipulator.a().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCONE)); //also ground
     manipulator.povUp().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCUBE));
 
     //manipulator manual arm 
-    manipulator.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
-    manipulator.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
+    // manipulator.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    // manipulator.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
     
-    manipulator.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
-    manipulator.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
+    // manipulator.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+    // manipulator.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
 
     //manipulator intake
     Trigger intakeSlow = new Trigger(() -> manipulator.getLeftY() > 0.2);

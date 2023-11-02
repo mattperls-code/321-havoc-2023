@@ -72,7 +72,7 @@ public final class Constants {
       public static final double kZeroPosition = 0;
 
       public static double kMaxOutput = 0.2;
-      public static double kMinOutput = -0.1;
+      public static double kMinOutput = -0.05; //-0.1
       public static final double kAnchorLength = Units.inchesToMeters(34.5); // in
       public static final double kTolerance = 5.0;
     }
@@ -107,10 +107,11 @@ public final class Constants {
       public static final boolean kEnableSoftLimit = false;
       public static final double kZeroPosition = 0;
 
-      public static double kMaxOutput = 0.26;
+
+      public static double kMaxOutput = 0.3; //0.26
       public static double kMinOutput = -0.15;
       public static final double kFloatingLength = 1.0 * Units.inchesToMeters(35); // in
-      public static final double kTolerance = 5.0;
+      public static final double kTolerance = 2;
     }
   }
 
@@ -166,7 +167,7 @@ public final class Constants {
     public static final double kWheelRadiusMeters = Units.inchesToMeters(1.5);
     public static final double kGearRatio = 6.8;
 
-    public static final double kMaxSpeedMetersPerSecond = 4.0;
+    public static final double kMaxSpeedMetersPerSecond = 2.0;
     public static final double kMaxOmegaRadiansPerSecond = 1.5 * Math.PI;
 
     public static final double kRPMToMetersPerSecond =
@@ -207,11 +208,11 @@ public final class Constants {
     HIGH(60.5, 6.5) - 51 in, 39.75 in
      */
 
-    SHELFCONE(77, 2), //also ground
-    SHELFCUBE(0, 0), // tune
-    MID(82, -9),
+    SHELFCONE(77, 2), //tune
+    SHELFCUBE(68.47, 0.34), // tune
+    MID(82, -9), //maybe tune
     HIGH(63, 20),
-    CONTRACT(100, -50);
+    CONTRACT(100, -48);
 
     public final double anchor;
 
@@ -255,7 +256,7 @@ public final class Constants {
   public static class Intake {
     public static final int kPort = 17;
     public static final double kLowVelocity = 1000;
-    public static final double kMaxVelocity = 2500;
+    public static final double kMaxVelocity = 8500;
   }
 
   public static class IntakePID {

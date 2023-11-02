@@ -25,25 +25,30 @@ public class ManualMoveFloating extends CommandBase {
 
   @Override
   public void execute() {
-    double anchorFF = arm.calculateAnchorFF();
-    double floatingFF = arm.calculateFloatingFF();
+    // double anchorFF = arm.calculateAnchorFF();
+    // double floatingFF = arm.calculateFloatingFF();
 
-    SmartDashboard.putBoolean("is reversed", reverse);
+    // SmartDashboard.putBoolean("is reversed", reverse);
 
-    floatingFF += reverse ? -0.00001 : 0.00001;
+    // floatingFF += reverse ? -0.00001 : 0.00001;
 
-    floatingFF = MathUtil.clamp(
-      floatingFF,
-      Constants.Arm.Floating.kMinOutput,
-      Constants.Arm.Floating.kMaxOutput);
+    // floatingFF = MathUtil.clamp(
+    //   floatingFF,
+    //   Constants.Arm.Floating.kMinOutput,
+    //   Constants.Arm.Floating.kMaxOutput);
 
-    arm.setAnchorControllerReference(anchorFF);
-    arm.setFloatingSpeed(floatingFF);
+    // arm.setAnchorControllerReference(anchorFF);
+    // arm.setFloatingSpeed(floatingFF);
+    if (reverse) {
+      arm.setFloatingSetpoint(arm.getFloatingAngle() - angleOffset);
+    } else {
+      arm.setFloatingSetpoint(arm.getFloatingAngle() + angleOffset);
+    }
   }
 
   @Override
   public void end(boolean interrupted){
-    arm.setFloatingSetpoint(arm.getFloatingAngle());
+    // arm.setFloatingSetpoint(arm.getFloatingAngle());
   }
 }
 

@@ -213,12 +213,12 @@ public class Arm extends SubsystemBase {
 
     double anchorFF = this.kG * (l1 * Math.cos(alpha) + l2 * Math.cos(beta));
 
-    if(alpha > 95 * Math.PI / 180){
-      return 0;
-    }
+    // if(alpha > 95 * Math.PI / 180){
+    //   return 0;
+    // }
     // return alpha > (85 * Math.PI / 180.0) ? 0 : anchorFF;
 
-    return alpha > 90 ? -anchorFF : anchorFF;
+    return alpha > Math.toRadians(90) ? -anchorFF : anchorFF;
   }
 
   public double calculateFloatingFF() {
@@ -236,8 +236,7 @@ public class Arm extends SubsystemBase {
               setFloatingSetpoint(setpoint.floating);
             })
         .until(() -> getAnchorAtSetpoint() && getFloatingAtSetpoint());
-  }
-  ;
+  };
 
   public CommandBase moveArmSeparate(RawArmSetpoints setpoint) {
     return Commands.sequence(
@@ -366,5 +365,11 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("floatingAngle", getFloatingAngle());
     SmartDashboard.putNumber("anchorSetpoint", anchorPIDController.getSetpoint());
     SmartDashboard.putNumber("floatingSetpoint", floatingPIDController.getSetpoint());
+    SmartDashboard.putBoolean("anchorAtSetpoint", getAnchorAtSetpoint());
+    SmartDashboard.putBoolean("floatingAtSetpoint", getFloatingAtSetpoint());
+    SmartDashboard.putNumber("anchorPosERROR", anchorPIDController.getPositionError());
+    SmartDashboard.putNumber("floatingPosERROR", floatingPIDController.getPositionError());
+
+
   }
 }
