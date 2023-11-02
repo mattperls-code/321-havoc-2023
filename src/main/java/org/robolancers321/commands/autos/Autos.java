@@ -43,7 +43,7 @@ public class Autos {
             this.arm,
             this.swerve,
             this.intake,
-            Constants.RawArmSetpoints.SHELF,
+            Constants.RawArmSetpoints.SHELFCONE,
             Score.ItemType.CONE);
 
     Command taxiCubeHigh =
@@ -61,7 +61,7 @@ public class Autos {
             this.arm,
             this.swerve,
             this.intake,
-            Constants.RawArmSetpoints.SHELF,
+            Constants.RawArmSetpoints.SHELFCUBE,
             Score.ItemType.CUBE);
 
     this.autoChooser.addOption(taxiCubeShelf.getName(), taxiCubeShelf);
