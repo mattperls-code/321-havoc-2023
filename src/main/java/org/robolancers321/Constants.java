@@ -108,7 +108,7 @@ public final class Constants {
       public static final double kZeroPosition = 0;
 
 
-      public static double kMaxOutput = 0.3; //0.26
+      public static double kMaxOutput = 0.3; // 0.26; //0.26
       public static double kMinOutput = -0.15;
       public static final double kFloatingLength = 1.0 * Units.inchesToMeters(35); // in
       public static final double kTolerance = 2;
@@ -167,7 +167,8 @@ public final class Constants {
     public static final double kWheelRadiusMeters = Units.inchesToMeters(1.5);
     public static final double kGearRatio = 6.8;
 
-    public static final double kMaxSpeedMetersPerSecond = 2.0;
+    public static final double kMaxSpeedMetersPerSecond = 
+    4.0;
     public static final double kMaxOmegaRadiansPerSecond = 1.5 * Math.PI;
 
     public static final double kRPMToMetersPerSecond =
@@ -208,11 +209,12 @@ public final class Constants {
     HIGH(60.5, 6.5) - 51 in, 39.75 in
      */
 
-    SHELFCONE(77, 2), //tune
-    SHELFCUBE(68.47, 0.34), // tune
-    MID(82, -9), //maybe tune
+    // SHELFCONE(100, 16), //tune
+    SHELFCONE(77, 12), //tune
+    SHELFCUBE(68.47, 15.34), // tune
+    MID(82, -3), //maybe tune
     HIGH(63, 20),
-    CONTRACT(100, -48);
+    CONTRACT(120, -48);
 
     public final double anchor;
 
@@ -225,10 +227,9 @@ public final class Constants {
   }
 
   public enum ArmSetpoints {
-
-
+    //Dont use this
     SHELF(50.375, 0),
-    MID(34, 22.75),
+    MID(34, 28.75),
     HIGH(46, 39.75),
     TEST(0, 0);
 
@@ -256,7 +257,7 @@ public final class Constants {
   public static class Intake {
     public static final int kPort = 17;
     public static final double kLowVelocity = 1000;
-    public static final double kMaxVelocity = 8500;
+    public static final double kMaxVelocity = 9500;
   }
 
   public static class IntakePID {

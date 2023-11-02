@@ -218,7 +218,13 @@ public class Arm extends SubsystemBase {
     // }
     // return alpha > (85 * Math.PI / 180.0) ? 0 : anchorFF;
 
-    return alpha > Math.toRadians(90) ? -anchorFF : anchorFF;
+    return anchorFF;
+
+    // if(this.getAnchorSetpoint() > 90){
+    //   return anchorFF;
+    // }
+
+    // return alpha > Math.toRadians(90) ? -anchorFF : anchorFF;
   }
 
   public double calculateFloatingFF() {
@@ -240,12 +246,12 @@ public class Arm extends SubsystemBase {
 
   public CommandBase moveArmSeparate(RawArmSetpoints setpoint) {
     return Commands.sequence(
-        runOnce(
+        run(
                 () -> {
                   setFloatingSetpoint(setpoint.floating);
                 })
             .until(() -> getFloatingAtSetpoint()),
-        runOnce(
+        run(
                 () -> {
                   setAnchorSetpoint(setpoint.anchor);
                 })

@@ -4,11 +4,14 @@ package org.robolancers321;
 import static org.robolancers321.Constants.OperatorConstants.*;
 import static org.robolancers321.Constants.Swerve.*;
 
+import org.robolancers321.Constants.RawArmSetpoints;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -18,6 +21,7 @@ import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
 import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
 import org.robolancers321.subsystems.arm.commands.MoveArmSeparate;
+import org.robolancers321.subsystems.arm.commands.MoveArmSeparateBackwards;
 import org.robolancers321.subsystems.intake.Intake;
 import org.robolancers321.subsystems.intake.commands.RunIntake;
 import org.robolancers321.subsystems.intake.commands.RunOuttake;
@@ -32,6 +36,8 @@ public class RobotContainer {
       new CommandXboxController(Constants.OperatorConstants.kManipulatorControllerPort);
   private final AHRS gyro = new AHRS(SPI.Port.kMXP);
   private final Arm arm = new Arm();
+
+  private boolean slowMode = false;
 
   private final Swerve swerve =
       new Swerve(
@@ -55,13 +61,24 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    driver.rightBumper().onTrue(new InstantCommand(() -> slowMode = true));
+    driver.rightBumper().onFalse(new InstantCommand(() -> slowMode = false));
 
     //manipulator arm
-    manipulator.b().onTrue(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+    manipulator.b().onTrue(new MoveArmSeparateBackwards(arm, Constants.RawArmSetpoints.CONTRACT));
+
     manipulator.x().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.MID));
+    // manipulator.x().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+
     manipulator.y().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.HIGH));
+    // manipulator.y().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+
     manipulator.a().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCONE)); //also ground
-    manipulator.povUp().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCUBE));
+    // manipulator.a().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+
+    manipulator.leftBumper().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCUBE));
+    // manipulator.povUp().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+
 
     //manipulator manual arm 
     // manipulator.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
@@ -81,11 +98,6 @@ public class RobotContainer {
 
     intakeFast.whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
     outtakeFast.whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
-
-
-    
-
-    
   };
 
   public Command getAutonomousCommand() {
@@ -93,15 +105,21 @@ public class RobotContainer {
   }
 
   private double getThrottle() {
-    return kMaxSpeedMetersPerSecond * MathUtil.applyDeadband(driver.getLeftY(), kJoystickDeadband);
+    double multiplier = slowMode ? 0.1 : 1.0;
+
+    return multiplier * kMaxSpeedMetersPerSecond * MathUtil.applyDeadband(driver.getLeftY(), kJoystickDeadband);
   }
 
   private double getStrafe() {
-    return kMaxSpeedMetersPerSecond * MathUtil.applyDeadband(driver.getLeftX(), kJoystickDeadband);
+    double multiplier = slowMode ? 0.1 : 1.0;
+
+    return multiplier * kMaxSpeedMetersPerSecond * MathUtil.applyDeadband(driver.getLeftX(), kJoystickDeadband);
   }
 
   private double getTurn() {
-    return kMaxOmegaRadiansPerSecond
+    double multiplier = slowMode ? 0.1 : 1.0;
+
+    return multiplier * kMaxOmegaRadiansPerSecond
         * MathUtil.applyDeadband(driver.getRightX(), kJoystickDeadband);
   }
 }
