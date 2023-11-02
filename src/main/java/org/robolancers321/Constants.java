@@ -1,15 +1,17 @@
 /* (C) Robolancers 2024 */
 package org.robolancers321;
 
+import org.robolancers321.subsystems.arm.InverseArmKinematics;
+
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import org.robolancers321.subsystems.arm.InverseArmKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -72,7 +74,7 @@ public final class Constants {
       public static double kMaxOutput = 0.2;
       public static double kMinOutput = -0.1;
       public static final double kAnchorLength = Units.inchesToMeters(34.5); // in
-      public static final double kTolerance = 2.0;
+      public static final double kTolerance = 5.0;
     }
 
     public static class Floating {
@@ -108,7 +110,7 @@ public final class Constants {
       public static double kMaxOutput = 0.26;
       public static double kMinOutput = -0.15;
       public static final double kFloatingLength = 1.0 * Units.inchesToMeters(35); // in
-      public static final double kTolerance = 2.0;
+      public static final double kTolerance = 5.0;
     }
   }
 
@@ -194,9 +196,19 @@ public final class Constants {
   }
 
   public enum RawArmSetpoints {
-    SHELFCONE(77, 2),
+    /* From game manual, y is from carpet, z is from front of grid
+    SHELF - 37.375 in high + 13 in from cone = 50.375 in high 
+    MID - 34 in high, 22.75 in
+    HIGH - 46 in high, 39.75 in
+    y offset = 17, z offset = 12
+
+    SHELF(85, 1.63) - 50.375 in, 26 in 
+    MID(82.86, -29.5) - 34 in, 22.75 in
+    HIGH(60.5, 6.5) - 51 in, 39.75 in
+     */
+
+    SHELFCONE(77, 2), //also ground
     SHELFCUBE(0, 0), // tune
-    GROUND(0, 0), // tune
     MID(82, -9),
     HIGH(63, 20),
     CONTRACT(100, -50);
@@ -212,11 +224,7 @@ public final class Constants {
   }
 
   public enum ArmSetpoints {
-    /* From game manual, y is from carpet, z is from front of grid
-    SHELF - 37.375 in high + 13 in from cone = 50.375
-    MID - 34 in high, 22.75 in
-    HIGH - 46 in high, 39.75 in
-     */
+
 
     SHELF(50.375, 0),
     MID(34, 22.75),

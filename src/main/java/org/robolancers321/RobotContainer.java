@@ -10,12 +10,16 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import org.robolancers321.commands.autos.Autos;
 import org.robolancers321.subsystems.arm.Arm;
 import org.robolancers321.subsystems.arm.commands.RunArm;
 import org.robolancers321.subsystems.arm.commands.ManualMoveAnchor;
 import org.robolancers321.subsystems.arm.commands.ManualMoveFloating;
 import org.robolancers321.subsystems.intake.Intake;
+import org.robolancers321.subsystems.intake.commands.RunIntake;
+import org.robolancers321.subsystems.intake.commands.RunOuttake;
 import org.robolancers321.subsystems.swerve.Swerve;
 import org.robolancers321.subsystems.swerve.SwerveModule;
 
@@ -23,6 +27,8 @@ public class RobotContainer {
   private final Field2d field = new Field2d();
   private final CommandXboxController driver =
       new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController manipulator =
+      new CommandXboxController(Constants.OperatorConstants.kManipulatorControllerPort);
   private final AHRS gyro = new AHRS(SPI.Port.kMXP);
   private final Arm arm = new Arm();
 
@@ -49,37 +55,38 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    driver.x().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.MID));
-    driver.y().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.HIGH));
-    driver.a().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCONE));
-    driver.b().onTrue(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
-    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
-    driver.rightTrigger().onTrue(new ManualMoveFloating(arm, false));
+    //manipulator arm
+    manipulator.b().onTrue(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
+    manipulator.x().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.MID));
+    manipulator.y().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.HIGH));
+    manipulator.a().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCONE)); //also ground
+    manipulator.povUp().onTrue(arm.moveArmSeparate(Constants.RawArmSetpoints.SHELFCUBE));
+
+    //manipulator manual arm 
+    manipulator.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
+    manipulator.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
     
-    // driver.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
-    driver.leftTrigger().onTrue(new ManualMoveFloating(arm, true));
+    manipulator.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+    manipulator.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
 
-    // driver.rightBumper().whileTrue(new ManualMoveFloating(arm, false));
-    // driver.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
-    // driver.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
-    // driver.leftTrigger().whileTrue(new ManualMoveAnchor(arm, true));
+    //manipulator intake
+    Trigger intakeSlow = new Trigger(() -> manipulator.getLeftY() > 0.2);
+    Trigger outtakeSlow = new Trigger(() -> manipulator.getLeftY() < -0.2);
+    Trigger intakeFast = new Trigger(() -> manipulator.getRightY() > 0.2);
+    Trigger outtakeFast = new Trigger(() -> manipulator.getRightY() < -0.2);
 
-    // driver.a().onTrue(new MoveToSetpoint(arm, arm.getAnchorSetpoint(),
-    // arm.getFloatingSetpoint()));
-    // driver.x().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.MID, isCubeMode));
-    // driver.y().onTrue(new MoveToSetpoint(arm, Constants.Arm.ArmSetpoints.HIGH, isCubeMode));
+    intakeSlow.whileTrue(new RunIntake(intake, Constants.Intake.kLowVelocity));
+    outtakeSlow.whileTrue(new RunOuttake(intake, Constants.Intake.kLowVelocity));
 
-    // driverController.start().onTrue(new InstantCommand(() -> {
-    //   if(isCubeMode == false){
-    //     isCubeMode = true;
-    //   } else {
-    //     isCubeMode = false;
-    //   }
-    // SmartDashboard.putBoolean("isCubeMode", isCubeMode);
+    intakeFast.whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
+    outtakeFast.whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
 
-  }
-  ;
+
+    
+
+    
+  };
 
   public Command getAutonomousCommand() {
     return autoPicker.getAutoChooser().getSelected();
