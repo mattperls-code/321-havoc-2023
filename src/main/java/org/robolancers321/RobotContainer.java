@@ -93,16 +93,16 @@ public class RobotContainer {
     // manipulator.leftBumper().whileTrue(new ManualMoveFloating(arm, true));
 
     //manipulator intake
-    Trigger intakeSlow = new Trigger(() -> manipulator.getLeftY() > 0.2);
-    Trigger outtakeSlow = new Trigger(() -> manipulator.getLeftY() < -0.2);
-    Trigger intakeFast = new Trigger(() -> manipulator.getRightY() > 0.2);
-    Trigger outtakeFast = new Trigger(() -> manipulator.getRightY() < -0.2);
+    Trigger intakeCone = new Trigger(() -> manipulator.getLeftY() > 0.2);
+    Trigger outtakeCone = new Trigger(() -> manipulator.getLeftY() < -0.2);
+    Trigger intakeCube = new Trigger(() -> manipulator.getRightY() > 0.2);
+    Trigger outtakeCube = new Trigger(() -> manipulator.getRightY() < -0.2);
 
-    intakeSlow.whileTrue(new RunIntake(intake, Constants.Intake.kLowVelocity));
-    outtakeSlow.whileTrue(new RunOuttake(intake, Constants.Intake.kLowVelocity));
+    intakeCone.whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
+    outtakeCone.whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
 
-    intakeFast.whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
-    outtakeFast.whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
+    outtakeCube.whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
+    intakeCube.whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
   };
 
   public Command getAutonomousCommand() {
