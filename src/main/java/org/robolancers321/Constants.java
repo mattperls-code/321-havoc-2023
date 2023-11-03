@@ -207,14 +207,16 @@ public final class Constants {
     SHELF(85, 1.63) - 50.375 in, 26 in 
     MID(82.86, -29.5) - 34 in, 22.75 in
     HIGH(60.5, 6.5) - 51 in, 39.75 in
+
+    11 deg of error for anchor
      */
 
-    // SHELFCONE(100, 16), 
+    // SHELFCONE(100, 15), 
     SHELFCONE(77, 10), 
     SHELFCUBE(68.47, 15.34), 
     MID(82, -3),
     HIGH(63, 20),
-    CONTRACT(120, -48);
+    CONTRACT(110, -48);
 
     public final double anchor;
 

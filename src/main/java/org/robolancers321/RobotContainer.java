@@ -63,21 +63,23 @@ public class RobotContainer {
   private void configureBindings() {
     driver.rightBumper().onTrue(new InstantCommand(() -> slowMode = true));
     driver.rightBumper().onFalse(new InstantCommand(() -> slowMode = false));
+    driver.x().onTrue(new MoveArmSeparateBackwards(arm, Constants.RawArmSetpoints.CONTRACT));
+    driver.b().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCONE));
+    driver.y().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCUBE));
+    driver.leftTrigger().whileTrue(new RunOuttake(intake, Constants.Intake.kMaxVelocity));
+    driver.rightTrigger().whileTrue(new RunIntake(intake, Constants.Intake.kMaxVelocity));
+
 
     //manipulator arm
     manipulator.b().onTrue(new MoveArmSeparateBackwards(arm, Constants.RawArmSetpoints.CONTRACT));
 
     manipulator.x().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.MID));
-    // manipulator.x().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
     manipulator.y().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.HIGH));
-    // manipulator.y().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
     manipulator.a().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCONE)); //also ground
-    // manipulator.a().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
     manipulator.leftBumper().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCUBE));
-    // manipulator.povUp().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
     Trigger isMovingFast = new Trigger(() -> 
       Math.hypot(getStrafe(), getThrottle()) > 0.5
