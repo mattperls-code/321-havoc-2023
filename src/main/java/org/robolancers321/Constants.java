@@ -67,7 +67,7 @@ public final class Constants {
           new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
       public static final double kMinAngle = 40;
-      public static final double kMaxAngle = 110;
+      public static final double kMaxAngle = 120; // ! TODO: is this too far, might be damaging to the hard stop
       public static final boolean kEnableSoftLimit = false;
       public static final double kZeroPosition = 0;
 
@@ -257,7 +257,7 @@ public final class Constants {
   public static class Intake {
     public static final int kPort = 17;
     public static final double kLowVelocity = 1000;
-    public static final double kMaxVelocity = 9500;
+    public static final double kMaxVelocity = 10000;
   }
 
   public static class IntakePID {

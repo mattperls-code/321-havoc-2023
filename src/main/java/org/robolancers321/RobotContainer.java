@@ -79,6 +79,11 @@ public class RobotContainer {
     manipulator.leftBumper().onTrue(new MoveArmSeparate(arm, Constants.RawArmSetpoints.SHELFCUBE));
     // manipulator.povUp().onFalse(arm.moveArmTogether(Constants.RawArmSetpoints.CONTRACT));
 
+    Trigger isMovingFast = new Trigger(() -> 
+      Math.hypot(getStrafe(), getThrottle()) > 0.5
+    );
+
+    isMovingFast.whileTrue(new MoveArmSeparateBackwards(arm, Constants.RawArmSetpoints.CONTRACT));
 
     //manipulator manual arm 
     // manipulator.rightTrigger().whileTrue(new ManualMoveAnchor(arm, false));
