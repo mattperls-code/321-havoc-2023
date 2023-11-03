@@ -209,10 +209,10 @@ public final class Constants {
     HIGH(60.5, 6.5) - 51 in, 39.75 in
      */
 
-    // SHELFCONE(100, 16), //tune
-    SHELFCONE(77, 12), //tune
-    SHELFCUBE(68.47, 15.34), // tune
-    MID(82, -3), //maybe tune
+    // SHELFCONE(100, 16), 
+    SHELFCONE(77, 10), 
+    SHELFCUBE(68.47, 15.34), 
+    MID(82, -3),
     HIGH(63, 20),
     CONTRACT(120, -48);
 

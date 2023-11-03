@@ -235,28 +235,28 @@ public class Arm extends SubsystemBase {
     return floatingFF;
   }
 
-  public CommandBase moveArmTogether(RawArmSetpoints setpoint) {
-    return runOnce(
-            () -> {
-              setAnchorSetpoint(setpoint.anchor);
-              setFloatingSetpoint(setpoint.floating);
-            })
-        .until(() -> getAnchorAtSetpoint() && getFloatingAtSetpoint());
-  };
+  // public CommandBase moveArmTogether(RawArmSetpoints setpoint) {
+  //   return runOnce(
+  //           () -> {
+  //             setAnchorSetpoint(setpoint.anchor);
+  //             setFloatingSetpoint(setpoint.floating);
+  //           })
+  //       .until(() -> getAnchorAtSetpoint() && getFloatingAtSetpoint());
+  // };
 
-  public CommandBase moveArmSeparate(RawArmSetpoints setpoint) {
-    return Commands.sequence(
-        run(
-                () -> {
-                  setFloatingSetpoint(setpoint.floating);
-                })
-            .until(() -> getFloatingAtSetpoint()),
-        run(
-                () -> {
-                  setAnchorSetpoint(setpoint.anchor);
-                })
-            .until(() -> getAnchorAtSetpoint()));
-  }
+  // public CommandBase moveArmSeparate(RawArmSetpoints setpoint) {
+  //   return Commands.sequence(
+  //       run(
+  //               () -> {
+  //                 setFloatingSetpoint(setpoint.floating);
+  //               })
+  //           .until(() -> getFloatingAtSetpoint()),
+  //       run(
+  //               () -> {
+  //                 setAnchorSetpoint(setpoint.anchor);
+  //               })
+  //           .until(() -> getAnchorAtSetpoint()));
+  // }
 
   private void initTuneControllers() {
     SmartDashboard.putNumber(
